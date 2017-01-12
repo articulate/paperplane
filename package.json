@@ -1,0 +1,27 @@
+{
+  "name": "jackalope",
+  "version": "0.0.0",
+  "description": "Functional server framework",
+  "main": "index.js",
+  "repository": "git@github.com:articulate/jackalope.git",
+  "author": "articulate",
+  "license": "MIT",
+  "scripts": {
+    "hint": "jshint --reporter=node_modules/jshint-stylish .",
+    "start": "node demo.js",
+    "start:dev": "nodemon -w . demo.js"
+  },
+  "dependencies": {
+    "etag": "^1.7.0",
+    "media-typer": "^0.3.0",
+    "path-to-regexp": "^1.7.0",
+    "qs": "^6.3.0",
+    "ramda": "^0.23.0",
+    "raw-body": "^2.2.0"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "nodemon": "^1.11.0"
+  }
+}
