@@ -1,6 +1,7 @@
 const { compose } = require('ramda')
 const http = require('http')
-const { methods, mount, parseJson, routes, static } = require('..')
+
+const { methods, mount, parseJson, redirect, routes, static } = require('..')
 
 const {
   createCourse,
@@ -26,7 +27,9 @@ const endpoints = routes({
     GET:   fetchCourse,
     PATCH: updateCourse,
     PUT:   updateCourse
-  })
+  }),
+
+  '/old-courses': () => redirect('/courses')
 })
 
 const app = compose(endpoints, parseJson)
