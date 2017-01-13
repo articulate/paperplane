@@ -1,6 +1,6 @@
 const { compose } = require('ramda')
 const http = require('http')
-const { json, methods, mount, parseJson, routes } = require('..')
+const { methods, mount, parseJson, routes, static } = require('..')
 
 const {
   createCourse,
@@ -15,6 +15,8 @@ const listening = err =>
   err ? console.error(err) : console.info(`Listening on port: ${port}`)
 
 const endpoints = routes({
+  '/public/:path+': static({ root: 'demo/public' }),
+
   '/courses': methods({
     GET:  fetchCourses,
     POST: createCourse

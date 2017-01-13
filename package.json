@@ -18,7 +18,8 @@
     "path-to-regexp": "^1.7.0",
     "qs": "^6.3.0",
     "ramda": "^0.23.0",
-    "raw-body": "^2.2.0"
+    "raw-body": "^2.2.0",
+    "send": "^0.14.1"
   },
   "devDependencies": {
     "jshint": "^2.9.4",
