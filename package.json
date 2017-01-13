@@ -6,8 +6,9 @@
   "repository": "git@github.com:articulate/jackalope.git",
   "author": "articulate",
   "license": "MIT",
-  "now": {
-    "alias": "jackalope.now.sh"
+  "engines": {
+    "node": "7",
+    "yarn": "0.17.4"
   },
   "scripts": {
     "hint": "jshint --reporter=node_modules/jshint-stylish .",
