@@ -15,7 +15,7 @@ const {
 
 const { home } = require('./api/pages')
 
-const port = 3000
+const port = process.env.PORT || 3000
 
 const listening = err =>
   err ? console.error(err) : console.info(`Listening on port: ${port}`)
