@@ -1,7 +1,7 @@
 const { assoc } = require('ramda')
 const { json }  = require('../..')
 
-const db = require('./db')('courses')
+const db = require('../lib/db')('courses')
 
 exports.createCourse = req =>
   db.put(req.body)
@@ -17,5 +17,5 @@ exports.fetchCourses = () =>
     .then(json)
 
 exports.updateCourse = req =>
-  db.patch(req.body)
+  db.patch(assoc('id', req.params.id, req.body))
     .then(json)

@@ -27,6 +27,7 @@
     "jshint-stylish": "^2.2.1",
     "levelup": "^1.3.3",
     "memdown": "^1.2.4",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "pug": "^2.0.0-beta6"
   }
 }

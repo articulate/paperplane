@@ -1,0 +1,12 @@
+doctype html
+html(lang='en')
+  head
+    title jackalope
+    meta(charset='utf-8')
+    meta(content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport')
+    link(href='/public/favicon.png' rel='icon' type='image/png')
+
+    body
+      img(src='/public/postcard.png')
+      p
+        pre= JSON.stringify(courses, null, 2)

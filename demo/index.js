@@ -1,3 +1,4 @@
+require('./lib/seed')()
 const { compose } = require('ramda')
 const http = require('http')
 const util = require('util')
@@ -10,7 +11,9 @@ const {
   fetchCourse,
   fetchCourses,
   updateCourse
-} = require('./lib/courses')
+} = require('./api/courses')
+
+const { home } = require('./api/pages')
 
 const port = 3000
 
@@ -18,6 +21,10 @@ const listening = err =>
   err ? console.error(err) : console.info(`Listening on port: ${port}`)
 
 const endpoints = routes({
+  '/': methods({
+    GET: home
+  }),
+
   '/public/:path+': static({ root: 'demo/public' }),
 
   '/courses': methods({
