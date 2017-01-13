@@ -12,6 +12,7 @@
     "start:dev": "nodemon -w . demo.js"
   },
   "dependencies": {
+    "boom": "^4.2.0",
     "etag": "^1.7.0",
     "media-typer": "^0.3.0",
     "path-to-regexp": "^1.7.0",

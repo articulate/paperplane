@@ -1,4 +1,3 @@
-exports.error   = require('./lib/error')
 exports.json    = require('./lib/json')
 exports.methods = require('./lib/methods')
 exports.mount   = require('./lib/mount')
