@@ -8,8 +8,8 @@
   "license": "MIT",
   "scripts": {
     "hint": "jshint --reporter=node_modules/jshint-stylish .",
-    "start": "node demo.js",
-    "start:dev": "nodemon -w . demo.js"
+    "start": "node demo/index.js",
+    "start:dev": "nodemon -w . demo/index.js"
   },
   "dependencies": {
     "boom": "^4.2.0",
@@ -23,6 +23,8 @@
   "devDependencies": {
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",
+    "levelup": "^1.3.3",
+    "memdown": "^1.2.4",
     "nodemon": "^1.11.0"
   }
 }
