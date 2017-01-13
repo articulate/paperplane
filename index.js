@@ -1,4 +1,5 @@
 exports.json      = require('./lib/json')
+exports.logger    = require('./lib/logger')
 exports.methods   = require('./lib/methods')
 exports.mount     = require('./lib/mount')
 exports.parseJson = require('./lib/parse-json')

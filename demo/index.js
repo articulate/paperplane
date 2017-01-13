@@ -1,7 +1,9 @@
 const { compose } = require('ramda')
 const http = require('http')
+const util = require('util')
 
-const { methods, mount, parseJson, redirect, routes, static } = require('..')
+const { logger, methods, mount, parseJson,
+        redirect, routes, static } = require('..')
 
 const {
   createCourse,
@@ -29,9 +31,12 @@ const endpoints = routes({
     PUT:   updateCourse
   }),
 
+  '/error': () => { throw new Error('this code is broken') },
+
   '/old-courses': () => redirect('/courses')
 })
 
-const app = compose(endpoints, parseJson)
+const app  = compose(endpoints, parseJson)
+const opts = { errLogger: logger, logger }
 
-http.createServer(mount(app)).listen(port, listening)
+http.createServer(mount(app, opts)).listen(port, listening)
