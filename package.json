@@ -7,7 +7,7 @@
   "author": "articulate",
   "license": "MIT",
   "engines": {
-    "node": "7",
+    "node": ">=6",
     "yarn": "0.17.4"
   },
   "scripts": {
