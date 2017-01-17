@@ -1,4 +1,4 @@
-# paperplane
+# paperplane [![npm version](https://img.shields.io/npm/v/paperplane.svg)](https://www.npmjs.com/package/paperplane) [![npm downloads](https://img.shields.io/npm/dt/paperplane.svg)](https://www.npmjs.com/package/paperplane)
 
 Lighter-than-air node.js server framework.
 
