@@ -1,0 +1,17 @@
+[
+  {
+    "id": "123",
+    "name": "John Smith",
+    "favoriteColor": "#f00"
+  },
+  {
+    "id": "abc",
+    "name": "Jane Doe",
+    "favoriteColor": "#0f0"
+  },
+  {
+    "id": "def",
+    "name": "Mortimer Snerd",
+    "favoriteColor": "#00f"
+  }
+]

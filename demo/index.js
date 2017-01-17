@@ -7,11 +7,11 @@ const { logger, methods, mount, parseJson,
         redirect, routes, static } = require('..')
 
 const {
-  createCourse,
-  fetchCourse,
-  fetchCourses,
-  updateCourse
-} = require('./api/courses')
+  createUser,
+  fetchUser,
+  fetchUsers,
+  updateUser
+} = require('./api/users')
 
 const { home } = require('./api/pages')
 
@@ -27,20 +27,20 @@ const endpoints = routes({
 
   '/public/:path+': static({ root: 'demo/public' }),
 
-  '/courses': methods({
-    GET:  fetchCourses,
-    POST: createCourse
+  '/users': methods({
+    GET:  fetchUsers,
+    POST: createUser
   }),
 
-  '/courses/:id': methods({
-    GET:   fetchCourse,
-    PATCH: updateCourse,
-    PUT:   updateCourse
+  '/users/:id': methods({
+    GET:   fetchUser,
+    PATCH: updateUser,
+    PUT:   updateUser
   }),
 
   '/error': () => { throw new Error('this code is broken') },
 
-  '/old-courses': () => redirect('/courses')
+  '/old-users': () => redirect('/users')
 })
 
 const app  = compose(endpoints, parseJson)

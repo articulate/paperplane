@@ -17,10 +17,10 @@
 (String | Buffer | Stream) -> Response
 ```
 
-Returns a [response object](), with the `content-type` header set to `text/html`.
+Returns a [response object](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), with the `content-type` header set to `text/html`.
 
 ```js
-const { html } = require('jackalope')
+const { html } = require('paperplane')
 const template = require('../views/template.pug')
 
 const usersPage = () =>
@@ -47,10 +47,10 @@ In the example above, it resolves with a response similar to:
 Object -> Response
 ```
 
-Returns a [response object](), with a `body` encoded with `JSON.stringify`, and the `content-type` header set to `application/json`.
+Returns a [response object](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), with a `body` encoded with `JSON.stringify`, and the `content-type` header set to `application/json`.
 
 ```js
-const { json } = require('jackalope')
+const { json } = require('paperplane')
 
 const users = () =>
   fetchUsers()
@@ -84,7 +84,7 @@ Provided as an example logger to use with [mount](#mount), as below.
 
 ```js
 const http = require('http')
-const { logger, mount, send } = require('jackalope')
+const { logger, mount, send } = require('paperplane')
 
 const app = () =>
   send() // 200 OK
@@ -108,7 +108,7 @@ Maps handler functions to request methods.  Returns a handler function.  If the 
 
 ```js
 const http = require('http')
-const { methods, mount } = require('jackalope')
+const { methods, mount } = require('paperplane')
 
 const { createUser, fetchUsers } = require('./api/users')
 
@@ -123,14 +123,14 @@ http.createServer(mount(app)).listen(3000)
 ### mount
 
 ```haskell
-((Request -> Response), Object) -> Function
+((Request -> Response), Object) -> (IncomingMessage, ServerResponse) -> ()
 ```
 
-Wraps a top-level handler function to prepare for mounting as a new `http` server.  Lifts the handler into a `Promise` chain, so the handler can respond with either a [response object](), or a `Promise` that resolves with one.  Also accepts an options object with `errLogger` and `logger` properties, both of which can be set to [logger](#logger).
+Wraps a top-level handler function to prepare for mounting as a new `http` server.  Lifts the handler into a `Promise` chain, so the handler can respond with either a [response object](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` that resolves with one.  Also accepts an options object with `errLogger` and `logger` properties, both of which can be set to [logger](#logger).
 
 ```js
 const http = require('http')
-const { logger, mount, send } = require('jackalope')
+const { logger, mount, send } = require('paperplane')
 
 const app = req =>
   Promise.resolve(req.body).then(send)
@@ -146,12 +146,12 @@ http.createServer(mount(app, opts)).listen(3000)
 Request -> Request
 ```
 
-Parses the request body as `json` if available, and if the `content-type` is `application/json`.  Otherwise, passes the [request object]() through untouched.
+Parses the request body as `json` if available, and if the `content-type` is `application/json`.  Otherwise, passes the [request object](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#request-object) through untouched.
 
 ```js
 const { compose } = require('ramda')
 const http = require('http')
-const { mount, parseJson, json } = require('jackalope')
+const { mount, parseJson, json } = require('paperplane')
 
 const echo = req =>
   Promise.resolve(req.body).then(json)
@@ -167,14 +167,14 @@ http.createServer(mount(app)).listen(3000)
 (String, Number) -> Response
 ```
 
-Accept a `Location` and optional `statusCode` (defaults to `302`), and returns a [response object]() denoting a redirect.
+Accept a `Location` and optional `statusCode` (defaults to `302`), and returns a [response object](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object) denoting a redirect.
 
-**Pro-tip:** if you want an earlier function in your composed application to respond with a redirect and skip everything else, just wrap it in a `Promise.reject` (see example below).  The error-handling code in `jackalope` will ignore it since it's not a real error.
+**Pro-tip:** if you want an earlier function in your composed application to respond with a redirect and skip everything else, just wrap it in a `Promise.reject` (see example below).  The error-handling code in `paperplane` will ignore it since it's not a real error.
 
 ```js
 const { compose, composeP } = require('ramda')
 const http = require('http')
-const { html, methods, mount, parseJson, routes, send } = require('jackalope')
+const { html, methods, mount, parseJson, routes, send } = require('paperplane')
 
 const login = require('./views/login')
 
@@ -200,7 +200,7 @@ const app = routes({
 http.createServer(mount(app)).listen(3000)
 ```
 
-In the example above, `redirect()` returns a [response object]() similar to:
+In the example above, `redirect()` returns a [response object](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object) similar to:
 
 ```js
 {
@@ -222,7 +222,7 @@ Maps handler functions to express-style route patterns.  Returns a handler funct
 
 ```js
 const http = require('http')
-const { mount, routes } = require('jackalope')
+const { mount, routes } = require('paperplane')
 
 const { fetchUser, fetchUsers, updateUser } = require('./lib/users')
 
@@ -246,10 +246,10 @@ http.createServer(mount(app)).listen(3000)
 (String | Buffer | Stream) -> Response
 ```
 
-The most basic response helper.  Simply accepts a `body`, and returns a properly formatted [response object](), without making any further assumptions.
+The most basic response helper.  Simply accepts a `body`, and returns a properly formatted [response object](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), without making any further assumptions.
 
 ```js
-const { send } = require('jackalope')
+const { send } = require('paperplane')
 
 send('This is the response body')
 ```
@@ -270,11 +270,11 @@ In the example above, it returns a response similar to:
 Object -> (Request -> Response)
 ```
 
-Accepts an options object (see [details here](https://www.npmjs.com/package/send#options)), and returns a handler function for serving static files.  Expects a `req.params.path` to be present on the [request object](), so you'll need to format your route pattern similar to the example below, making sure to include a `/:path+` route segment.
+Accepts an options object (see [details here](https://www.npmjs.com/package/send#options)), and returns a handler function for serving static files.  Expects a `req.params.path` to be present on the [request object](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#request-object), so you'll need to format your route pattern similar to the example below, making sure to include a `/:path+` route segment.
 
 ```js
 const http = require('http')
-const { mount, routes, static } = require('jackalope')
+const { mount, routes, static } = require('paperplane')
 
 const app = routes({
   '/public/:path+': static({ root: 'public' })

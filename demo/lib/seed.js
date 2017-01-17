@@ -1,5 +1,5 @@
-const courses = require('../seeds/courses')
-const db = require('./db')('courses')
+const db    = require('./db')('users')
+const users = require('../seeds/users')
 
 module.exports = () =>
-  Promise.all(courses.map(db.put))
+  Promise.all(users.map(db.put))

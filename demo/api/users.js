@@ -1,21 +1,21 @@
 const { assoc } = require('ramda')
 const { json }  = require('../..')
 
-const db = require('../lib/db')('courses')
+const db = require('../lib/db')('users')
 
-exports.createCourse = req =>
+exports.createUser = req =>
   db.put(req.body)
     .then(json)
     .then(assoc('statusCode', 201))
 
-exports.fetchCourse = req =>
+exports.fetchUser = req =>
   db.get(req.params.id)
     .then(json)
 
-exports.fetchCourses = () =>
+exports.fetchUsers = () =>
   db.where({ keys: false })
     .then(json)
 
-exports.updateCourse = req =>
+exports.updateUser = req =>
   db.patch(assoc('id', req.params.id, req.body))
     .then(json)
