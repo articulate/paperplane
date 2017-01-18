@@ -1,3 +1,5 @@
+/* jshint expr: true */
+
 const { expect } = require('chai')
 
 const logger = require('../lib/logger')
