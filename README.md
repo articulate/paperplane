@@ -1,4 +1,4 @@
-# paperplane [![npm version](https://img.shields.io/npm/v/paperplane.svg)](https://www.npmjs.com/package/paperplane) [![npm downloads](https://img.shields.io/npm/dt/paperplane.svg)](https://www.npmjs.com/package/paperplane)
+# paperplane [![npm version](https://img.shields.io/npm/v/paperplane.svg?colorB=ff69b4)](https://www.npmjs.com/package/paperplane) [![npm downloads](https://img.shields.io/npm/dt/paperplane.svg)](https://www.npmjs.com/package/paperplane) [![Build Status](https://travis-ci.org/articulate/paperplane.svg?branch=master)](https://travis-ci.org/articulate/paperplane)
 
 Lighter-than-air node.js server framework.
 
