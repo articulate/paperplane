@@ -1,5 +1,3 @@
-/* jshint expr: true */
-
 const { expect } = require('chai')
 const { always: K, objOf } = require('ramda')
 const prop = require('prop-factory')

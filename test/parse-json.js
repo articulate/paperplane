@@ -1,4 +1,3 @@
-const { compose } = require('ramda')
 const { expect }  = require('chai')
 
 const parseJson = require('../lib/parse-json')
