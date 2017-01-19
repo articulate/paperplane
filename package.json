@@ -20,7 +20,7 @@
     "etag": "^1.7.0",
     "http-errors": "^1.5.1",
     "media-typer": "^0.3.0",
-    "path-to-regexp": "^1.7.0",
+    "path-match": "^1.2.4",
     "qs": "^6.3.0",
     "ramda": "^0.23.0",
     "raw-body": "^2.2.0",
