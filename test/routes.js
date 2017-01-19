@@ -1,38 +1,28 @@
-const { expect } = require('chai')
-const { compose, objOf, path } = require('ramda')
-const prop = require('prop-factory')
+const { always: K, compose, objOf, path } = require('ramda')
+const http    = require('http')
+const request = require('supertest')
 
+const json   = require('../lib/json')
 const routes = require('../lib/routes')
+const mount  = require('../lib/mount')
 
 describe('routes', function() {
   const app = routes({
-    '/users/:id': compose(objOf('body'), path(['params', 'id'])),
+    '/users':     K(json([])),
+    '/users/:id': compose(objOf('body'), path(['params', 'id']))
   })
 
-  const req = objOf('pathname')
+  const server = http.createServer(mount(app))
 
-  describe('when a route pattern matches', function() {
-    const res = prop()
-
-    beforeEach(function() {
-      return app(req('/users/123')).then(res)
-    })
-
-    it('parses the route params && routes to that handler function', function() {
-      expect(res().body).to.equal('123')
-    })
+  it('routes to handler matching the request url', function(done) {
+    request(server).get('/users').expect(200, [], done)
   })
 
-  describe('when no routes patterns match', function() {
-    const res = prop()
+  it('parses the route params for matched routes', function(done) {
+    request(server).get('/users/bob').expect(200, 'bob', done)
+  })
 
-    beforeEach(function() {
-      return app(req('/wrong/route')).catch(res)
-    })
-
-    it('booms with a 404 Not Found', function() {
-      expect(res().isBoom).to.be.true
-      expect(res().output.statusCode).to.equal(404)
-    })
+  it('404 Not Founds for unmatched routes', function(done) {
+    request(server).get('/not-found').expect(404, done)
   })
 })

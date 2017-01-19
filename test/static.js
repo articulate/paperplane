@@ -1,7 +1,6 @@
-const { always: K, compose, merge, objOf, prop } = require('ramda')
-const { expect } = require('chai')
-const http       = require('http')
-const request    = require('supertest')
+const { always: K  } = require('ramda')
+const http    = require('http')
+const request = require('supertest')
 
 const mount  = require('../lib/mount')
 const routes = require('../lib/routes')

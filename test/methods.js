@@ -1,8 +1,9 @@
-const { expect } = require('chai')
-const { always: K, objOf } = require('ramda')
-const prop = require('prop-factory')
+const { always: K } = require('ramda')
+const http    = require('http')
+const request = require('supertest')
 
 const methods = require('../lib/methods')
+const mount   = require('../lib/mount')
 
 describe('methods', function() {
   const app = methods({
@@ -10,30 +11,13 @@ describe('methods', function() {
     PUT: K({ body: 'PUT' })
   })
 
-  const req = objOf('method')
+  const server = http.createServer(mount(app))
 
-  describe('when a request method matches', function() {
-    const res = prop()
-
-    beforeEach(function() {
-      return app(req('GET')).then(res)
-    })
-
-    it('routes to that handler function', function() {
-      expect(res().body).to.equal('GET')
-    })
+  it('routes to the handler matching the request method', function(done) {
+    request(server).get('/').expect(200, 'GET', done)
   })
 
-  describe('when no request methods match', function() {
-    const res = prop()
-
-    beforeEach(function() {
-      return app(req('POST')).catch(res)
-    })
-
-    it('booms with a 404 Not Found', function() {
-      expect(res().isBoom).to.be.true
-      expect(res().output.statusCode).to.equal(404)
-    })
+  it('404 Not Founds when no matching method is found', function(done) {
+    request(server).post('/').send({}).expect(404, done)
   })
 })
