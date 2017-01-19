@@ -17,8 +17,8 @@
     "test": "mocha --reporter dot"
   },
   "dependencies": {
-    "boom": "^4.2.0",
     "etag": "^1.7.0",
+    "http-errors": "^1.5.1",
     "media-typer": "^0.3.0",
     "path-to-regexp": "^1.7.0",
     "qs": "^6.3.0",
@@ -35,7 +35,6 @@
     "memdown": "^1.2.4",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
-    "prop-factory": "^1.0.0",
     "pug": "^2.0.0-beta6",
     "supertest": "^2.0.1"
   }
