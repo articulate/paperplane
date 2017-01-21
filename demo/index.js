@@ -1,7 +1,6 @@
 require('./lib/seed')()
 const { compose } = require('ramda')
 const http = require('http')
-const util = require('util')
 
 const { logger, methods, mount, parseJson,
         redirect, routes, static } = require('..')

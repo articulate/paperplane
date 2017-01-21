@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - '7'
+  - '6'
+before_install:
+  - npm install -g yarn@0.17.4
+install:
+  - yarn install --pure-lockfile
+script:
+  - yarn test
