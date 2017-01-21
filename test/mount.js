@@ -111,8 +111,8 @@ describe('mount', function() {
       })
     })
 
-    it('logs requsts and responses', function(done) {
-      agent.get('/string').end((err, res) => {
+    it('logs requests and responses', function(done) {
+      agent.get('/string').end(() => {
         expect(logger.calls.length).to.equal(1)
         expect(logger.calls[0].req).to.exist
         expect(logger.calls[0].res).to.exist
