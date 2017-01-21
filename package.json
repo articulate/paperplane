@@ -17,6 +17,7 @@
     "test": "mocha --reporter dot"
   },
   "dependencies": {
+    "cookie": "^0.3.1",
     "etag": "^1.7.0",
     "http-errors": "^1.5.1",
     "media-typer": "^0.3.0",

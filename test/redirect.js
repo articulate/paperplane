@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 
-const redirect = require('../lib/redirect')
+const { redirect } = require('..')
 
 describe('redirect', function() {
   const location = '/new-location',

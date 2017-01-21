@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 
-const send = require('../lib/send')
+const { send } = require('..')
 
 describe('send', function() {
   const body = 'body',

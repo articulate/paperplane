@@ -84,7 +84,7 @@ Instead we'd prefer a pure function that accepts a request-like input and return
 Request -> Response
 ```
 
-To help with that transformation, `paperplane` provides the [`mount`]() function:
+To help with that transformation, `paperplane` provides the [`mount`](https://github.com/articulate/paperplane/blob/master/docs/API.md#mount) function:
 
 ```js
 const http = require('http')
@@ -105,28 +105,33 @@ Before we get much further we should go over the `Request` and `Response` object
 
 The `Request` object is the sole input to your handler function, and has the following properties:
 
-- `body` _(String | Buffer)_: request body, will be a `String` if `content-type` includes a `charset`
-- `headers` _(Object)_: map of headers, with downcased header names as keys
-- `method` _(String)_: request method, should be uppercase
-- `params` _(Object)_: map of named route parameters, only present if [`routes`]() function used
-- `pathname` _(String)_: just the path portion of the request url
-- `query` _(Object)_: map of query string parameters
-- `url` _(String)_: the full [request url](http://devdocs.io/node/http#http_message_url)
+| Property | Type | Details |
+| -------- | ---- | ------- |
+| `body` | `String` | request body, with default charset of `utf8` |
+| `cookies` | `Object` | map of cookies, parsed from the `cookie` header |
+| `headers` | `Object` | map of headers, with downcased header names as keys |
+| `method` | `String` | request method, should be uppercase |
+| `params` | `Object` | map of named route parameters, only present if [`routes`](https://github.com/articulate/paperplane/blob/master/docs/API.md#routes) function used |
+| `pathname` | `String` | just the path portion of the request url |
+| `query` | `Object` | map of query string parameters |
+| `url` | `String` | the full [request url](http://devdocs.io/node/http#http_message_url) |
 
 ### `Response` object
 
 Your handler function needs to return a `Response` object, or a `Promise` that resolves to one.  Remember, this is functional programming, so `Response` is not a class.  It's just a POJO with the following properties:
 
-- `body` _(String | Buffer | Stream)_: can also be `null` for an empty body
-- `headers` _(Object)_: defaults to `{}`
-- `statusCode` _(Number)_: defaults to `200`
+| Property | Type | Details |
+| -------- | ---- | ------- |
+| `body` | `Buffer | Stream | String` | can also be falsy for an empty body |
+| `headers` | `Object` | defaults to `{}` |
+| `statusCode` | `Number` | defaults to `200` |
 
 You can build the `Response` any way you like, either manually like in the example above, or you can use one of the helpers supplied by `paperplane`:
 
-- [`html`]() - accepts a `body`, and sets the `content-type` header to `text/html` (useful for views)
-- [`json`]() - accepts a `body`, and sets the `content-type` header to `application/json` (useful for `json` API's)
-- [`redirect`]() - accepts a `Location` header, and sets an appropriate redirect `statusCode`
-- [`send`]() - accepts a `body`, and returns a basic `Response`
+- [`html`](https://github.com/articulate/paperplane/blob/master/docs/API.md#html) - accepts a `body`, and sets the `content-type` header to `text/html` (useful for views)
+- [`json`](https://github.com/articulate/paperplane/blob/master/docs/API.md#json) - accepts a `body`, and sets the `content-type` header to `application/json` (useful for `json` API's)
+- [`redirect`](https://github.com/articulate/paperplane/blob/master/docs/API.md#redirect) - accepts a `Location` header, and sets an appropriate redirect `statusCode`
+- [`send`](https://github.com/articulate/paperplane/blob/master/docs/API.md#send) - accepts a `body`, and returns a basic `Response`
 
 But don't get hung up on using helper functions if you don't like them: what is important is the structure of the `Response`, not how you acheived it.
 

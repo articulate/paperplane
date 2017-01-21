@@ -2,9 +2,7 @@ const { always: K  } = require('ramda')
 const http    = require('http')
 const request = require('supertest')
 
-const mount  = require('../lib/mount')
-const routes = require('../lib/routes')
-const static = require('../lib/static')
+const { mount, routes, static } = require('..')
 
 describe('static', function() {
   const app = routes({

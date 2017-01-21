@@ -2,9 +2,7 @@ const { always: K, compose, objOf, path } = require('ramda')
 const http    = require('http')
 const request = require('supertest')
 
-const json   = require('../lib/json')
-const routes = require('../lib/routes')
-const mount  = require('../lib/mount')
+const { json, mount, routes } = require('..')
 
 describe('routes', function() {
   const app = routes({

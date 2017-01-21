@@ -1,4 +1,4 @@
-const { always: K, compose, pick } = require('ramda')
+const { always: K, compose, pick, prop } = require('ramda')
 const { expect }   = require('chai')
 const { NotFound } = require('http-errors')
 const Boom    = require('boom')
@@ -14,6 +14,7 @@ describe('mount', function() {
     '/body':   pick(['body']),
     '/boom':   () => { throw Boom.notFound() },
     '/buffer': K({ body: Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72]) }),
+    '/cookie': compose(json, prop('cookies')),
     '/error':  () => { throw new Error('error') },
     '/http':   () => { throw new NotFound() },
     '/json':   K(json({})),
@@ -41,6 +42,16 @@ describe('mount', function() {
     it('parses the pathname and query', function(done) {
       agent.get('/url?foo=bar')
         .expect(200, { pathname: '/url', query: { foo: 'bar' } }, done)
+    })
+
+    it('parses the cookies', function(done) {
+      agent.get('/cookie')
+        .set('cookie', 'foo=bar; equation=E%3Dmc%5E2')
+        .end((err, res) => {
+          expect(res.body.foo).to.equal('bar')
+          expect(res.body.equation).to.equal('E=mc^2')
+          done()
+        })
     })
   })
 
