@@ -11,13 +11,14 @@ describe('methods', function() {
     PUT: K({ body: 'PUT' })
   })
 
-  const server = http.createServer(mount(app))
+  const server = http.createServer(mount(app)),
+        agent  = request.agent(server)
 
   it('routes to the handler matching the request method', function(done) {
-    request(server).get('/').expect(200, 'GET', done)
+    agent.get('/').expect(200, 'GET', done)
   })
 
   it('404 Not Founds when no matching method is found', function(done) {
-    request(server).post('/').send({}).expect(404, done)
+    agent.post('/').send({}).expect(404, done)
   })
 })

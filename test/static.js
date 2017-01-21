@@ -9,20 +9,17 @@ const static = require('../lib/static')
 describe('static', function() {
   const app = routes({
     '/foo': K({ body: 'bar' }),
-    '/public/:path+': static({ root: 'test/fixtures' })
+    '/pub/:path+': static({ root: 'test/fixtures' })
   })
 
-  const server = http.createServer(mount(app))
+  const server = http.createServer(mount(app)),
+        agent  = request.agent(server)
 
   it('responds with found static files', function(done) {
-    request(server)
-      .get('/public/static-file.txt')
-      .expect(200, 'testing testing\n', done)
+    agent.get('/pub/static-file.txt').expect(200, 'testing testing\n', done)
   })
 
   it('404 Not Founds for missing static files', function(done) {
-    request(server)
-      .get('/public/not-a-file.png')
-      .expect(404, done)
+    agent.get('/pub/not-a-file.png').expect(404, done)
   })
 })
