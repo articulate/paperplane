@@ -1,8 +1,8 @@
 require('./lib/seed')()
-const { compose } = require('ramda')
+const { compose, prop } = require('ramda')
 const http = require('http')
 
-const { logger, methods, mount, parseJson,
+const { json, logger, methods, mount, parseJson,
         redirect, routes, static } = require('..')
 
 const {
@@ -23,6 +23,8 @@ const endpoints = routes({
   '/': methods({
     GET: home
   }),
+
+  '/cookies': compose(json, prop('cookies')),
 
   '/public/:path+': static({ root: 'demo/public' }),
 
