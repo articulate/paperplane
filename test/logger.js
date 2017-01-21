@@ -49,4 +49,20 @@ describe('logger', function() {
   it('passes thru other message properties unchanged', function() {
     expect(output.foo).to.equal('bar')
   })
+
+  describe('when used as the errLogger', function() {
+    const err = JSON.parse(logger(new Error('message')))
+
+    it('includes the error message', function() {
+      expect(err.message).to.equal('message')
+    })
+
+    it('includes the error name', function() {
+      expect(err.name).to.equal('Error')
+    })
+
+    it('includes the error stack', function() {
+      expect(err.stack).to.exist
+    })
+  })
 })
