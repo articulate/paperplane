@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 
-const html = require('../lib/html')
+const { html } = require('..')
 
 describe('html', function() {
   const body = '<html></html>',

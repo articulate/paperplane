@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 
-const json = require('../lib/json')
+const { json } = require('..')
 
 describe('json', function() {
   const body = { foo: 'bar' },

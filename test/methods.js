@@ -2,8 +2,7 @@ const { always: K } = require('ramda')
 const http    = require('http')
 const request = require('supertest')
 
-const methods = require('../lib/methods')
-const mount   = require('../lib/mount')
+const { methods, mount } = require('..')
 
 describe('methods', function() {
   const app = methods({

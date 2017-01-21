@@ -1,6 +1,6 @@
 const { expect }  = require('chai')
 
-const parseJson = require('../lib/parse-json')
+const { parseJson } = require('..')
 
 const request = contentType => ({
   body: '{"foo":"bar"}',

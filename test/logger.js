@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 
-const logger = require('../lib/logger')
+const { logger } = require('..')
 
 describe('logger', function() {
   const message = {
