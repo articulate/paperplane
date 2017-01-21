@@ -84,7 +84,7 @@ Instead we'd prefer a pure function that accepts a request-like input and return
 Request -> Response
 ```
 
-To help with that transformation, `paperplane` provides the [`mount`]() function:
+To help with that transformation, `paperplane` provides the [`mount`](https://github.com/articulate/paperplane/blob/master/docs/API.md#mount) function:
 
 ```js
 const http = require('http')
@@ -111,7 +111,7 @@ The `Request` object is the sole input to your handler function, and has the fol
 | `cookies` | `Object` | map of cookies, parsed from the `cookie` header |
 | `headers` | `Object` | map of headers, with downcased header names as keys |
 | `method` | `String` | request method, should be uppercase |
-| `params` | `Object` | map of named route parameters, only present if [`routes`]() function used |
+| `params` | `Object` | map of named route parameters, only present if [`routes`](https://github.com/articulate/paperplane/blob/master/docs/API.md#routes) function used |
 | `pathname` | `String` | just the path portion of the request url |
 | `query` | `Object` | map of query string parameters |
 | `url` | `String` | the full [request url](http://devdocs.io/node/http#http_message_url) |
@@ -128,10 +128,10 @@ Your handler function needs to return a `Response` object, or a `Promise` that r
 
 You can build the `Response` any way you like, either manually like in the example above, or you can use one of the helpers supplied by `paperplane`:
 
-- [`html`]() - accepts a `body`, and sets the `content-type` header to `text/html` (useful for views)
-- [`json`]() - accepts a `body`, and sets the `content-type` header to `application/json` (useful for `json` API's)
-- [`redirect`]() - accepts a `Location` header, and sets an appropriate redirect `statusCode`
-- [`send`]() - accepts a `body`, and returns a basic `Response`
+- [`html`](https://github.com/articulate/paperplane/blob/master/docs/API.md#html) - accepts a `body`, and sets the `content-type` header to `text/html` (useful for views)
+- [`json`](https://github.com/articulate/paperplane/blob/master/docs/API.md#json) - accepts a `body`, and sets the `content-type` header to `application/json` (useful for `json` API's)
+- [`redirect`](https://github.com/articulate/paperplane/blob/master/docs/API.md#redirect) - accepts a `Location` header, and sets an appropriate redirect `statusCode`
+- [`send`](https://github.com/articulate/paperplane/blob/master/docs/API.md#send) - accepts a `body`, and returns a basic `Response`
 
 But don't get hung up on using helper functions if you don't like them: what is important is the structure of the `Response`, not how you acheived it.
 
