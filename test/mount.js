@@ -3,11 +3,15 @@ const { expect }   = require('chai')
 const { NotFound } = require('http-errors')
 const Boom    = require('boom')
 const http    = require('http')
+const Joi     = require('joi')
 const request = require('supertest')
 const str     = require('string-to-stream')
 
 const { json, mount, routes } = require('..')
+const promisify = require('./lib/promisify')
 const spy = require('./lib/spy')
+
+const validate = promisify(Joi.validate, Joi)
 
 describe('mount', function() {
   const app = routes({
@@ -17,6 +21,7 @@ describe('mount', function() {
     '/cookie': compose(json, prop('cookies')),
     '/error':  () => { throw new Error('error') },
     '/http':   () => { throw new NotFound() },
+    '/joi':    () => validate(123, Joi.string()),
     '/json':   K(json({})),
     '/none':   K({ body: undefined }),
     '/stream': K({ body: str('stream') }),
@@ -110,6 +115,10 @@ describe('mount', function() {
 
     it('catches and formats http-errors', function(done) {
       agent.get('/http').expect(404, done)
+    })
+
+    it('catches and formats joi errors', function(done) {
+      agent.get('/joi').expect(400, done)
     })
   })
 
