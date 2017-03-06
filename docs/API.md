@@ -1,5 +1,6 @@
 # API
 
+- [`cors`](#cors)           - CORS support wrapper
 - [`html`](#html)           - response helper, type `text/html`
 - [`json`](#json)           - response helper, type `application/json`
 - [`logger`](#logger)       - json request logger
@@ -10,6 +11,39 @@
 - [`routes`](#routes)       - maps express-style route patterns to handler functions
 - [`send`](#send)           - basic response helper
 - [`static`](#static)       - static file serving handler
+
+### cors
+
+```haskell
+((Request -> (Response | Promise Response)), Object) -> Request -> Promise Response
+```
+
+Wraps a top-level handler function to add support for [CORS](http://devdocs.io/http/access_control_cors).  Lifts the handler into a `Promise` chain, so the handler can respond with either a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` that resolves with one.  Also accepts an object with the following optional properties to override the default CORS behavior.
+
+| Property | Type | Overridden header | Default |
+| -------- | ---- | ----------------- | ------- |
+| `credentials` | `String` | `access-control-allow-credentials` | `true` |
+| `headers` | `String` | `access-control-allow-headers` | `content-type` |
+| `methods` | `String` | `access-control-allow-methods` | `GET,POST,OPTIONS,PUT,PATCH,DELETE` |
+| `origin`  | `String` | `access-control-allow-origin` | `*` |
+
+```js
+const { always } = require('ramda')
+const http = require('http')
+const { cors, mount, send } = require('paperplane')
+
+const endpoint = req =>
+  Promise.resolve(req.body).then(send)
+
+const opts = {
+  headers: 'x-custom-header',
+  methods: 'GET,PUT'
+}
+
+const app = cors(endpoint, opts)
+
+http.createServer(mount(app)).listen(3000)
+```
 
 ### html
 

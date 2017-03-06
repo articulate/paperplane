@@ -1,3 +1,4 @@
+exports.cors      = require('./lib/cors')
 exports.html      = require('./lib/html')
 exports.json      = require('./lib/json')
 exports.logger    = require('./lib/logger')
