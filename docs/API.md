@@ -6,7 +6,7 @@
 - [`logger`](#logger)       - json request logger
 - [`methods`](#methods)     - maps request methods to handler functions
 - [`mount`](#mount)         - top-level server function wrapper
-- [`parseJson`](#parseJson) - json body parser
+- [`parseJson`](#parsejson) - json body parser
 - [`redirect`](#redirect)   - redirect response helper
 - [`routes`](#routes)       - maps express-style route patterns to handler functions
 - [`send`](#send)           - basic response helper
