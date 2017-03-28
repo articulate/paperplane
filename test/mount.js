@@ -15,18 +15,19 @@ const validate = promisify(Joi.validate, Joi)
 
 describe('mount', function() {
   const app = routes({
-    '/body':   pick(['body']),
-    '/boom':   () => { throw Boom.notFound() },
-    '/buffer': K({ body: Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72]) }),
-    '/cookie': compose(json, prop('cookies')),
-    '/error':  () => { throw new Error('error') },
-    '/http':   () => { throw new NotFound() },
-    '/joi':    () => validate(123, Joi.string()),
-    '/json':   K(json({})),
-    '/none':   K({ body: undefined }),
-    '/stream': K({ body: str('stream') }),
-    '/string': K({ body: 'string' }),
-    '/url':    compose(json, pick(['pathname', 'query']))
+    '/body':     pick(['body']),
+    '/boom':     () => { throw Boom.notFound() },
+    '/buffer':   K({ body: Buffer.from([0x62,0x75,0x66,0x66,0x65,0x72]) }),
+    '/cookie':   compose(json, prop('cookies')),
+    '/error':    () => { throw new Error('error') },
+    '/http':     () => { throw new NotFound() },
+    '/joi':      () => validate(123, Joi.string()),
+    '/json':     K(json({})),
+    '/protocol': compose(json, pick(['protocol'])),
+    '/none':     K({ body: undefined }),
+    '/stream':   K({ body: str('stream') }),
+    '/string':   K({ body: 'string' }),
+    '/url':      compose(json, pick(['pathname', 'query']))
   })
 
   const errLogger = spy(),
@@ -47,6 +48,11 @@ describe('mount', function() {
     it('parses the pathname and query', function(done) {
       agent.get('/url?foo=bar')
         .expect(200, { pathname: '/url', query: { foo: 'bar' } }, done)
+    })
+
+    it('parses the protocol', function(done) {
+      agent.get('/protocol')
+        .expect(200, { protocol: 'http' }, done)
     })
 
     it('parses the cookies', function(done) {
