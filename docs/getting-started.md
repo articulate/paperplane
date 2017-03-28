@@ -113,6 +113,7 @@ The `Request` object is the sole input to your handler function, and has the fol
 | `method` | `String` | request method, should be uppercase |
 | `params` | `Object` | map of named route parameters, only present if [`routes`](https://github.com/articulate/paperplane/blob/master/docs/API.md#routes) function used |
 | `pathname` | `String` | just the path portion of the request url |
+| `protocol` | `String` | `https` if connection is encrypted, otherwise `http` |
 | `query` | `Object` | map of query string parameters |
 | `url` | `String` | the full [request url](http://devdocs.io/node/http#http_message_url) |
 
