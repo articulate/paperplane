@@ -162,6 +162,8 @@ http.createServer(mount(app)).listen(3000)
 
 Wraps a top-level handler function to prepare for mounting as a new `http` server.  Lifts the handler into a `Promise` chain, so the handler can respond with either a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` that resolves with one.  Also accepts an options object with `errLogger` and `logger` properties, both of which can be set to [`logger`](#logger).
 
+**Note:**  The `errLogger` option is primarily intended for logging, not notifying your error aggregation service.  For that you will need to wrap your top-level handler function with [`paperplane-airbrake`](https://github.com/articulate/paperplane-airbrake) or something similar.
+
 ```js
 const http = require('http')
 const { logger, mount, send } = require('paperplane')
