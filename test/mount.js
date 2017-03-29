@@ -13,7 +13,7 @@ const spy = require('./lib/spy')
 
 const validate = promisify(Joi.validate, Joi)
 
-describe('mount', function() {
+describe('mount', () => {
   const app = routes({
     '/body':     pick(['body']),
     '/boom':     () => { throw Boom.notFound() },
@@ -35,25 +35,25 @@ describe('mount', function() {
         server    = http.createServer(mount(app, { errLogger, logger })),
         agent     = request.agent(server)
 
-  afterEach(function() {
+  afterEach(() => {
     errLogger.reset()
     logger.reset()
   })
 
-  describe('request', function() {
-    it('reads the whole body', function(done) {
-      agent.post('/body').send('body').expect(200, 'body', done)
-    })
+  describe('request', () => {
+    it('reads the whole body', () =>
+      agent.post('/body').send('body').expect(200, 'body')
+    )
 
-    it('parses the pathname and query', function(done) {
+    it('parses the pathname and query', () =>
       agent.get('/url?foo=bar')
-        .expect(200, { pathname: '/url', query: { foo: 'bar' } }, done)
-    })
+        .expect(200, { pathname: '/url', query: { foo: 'bar' } })
+    )
 
-    it('parses the protocol', function(done) {
+    it('parses the protocol', () =>
       agent.get('/protocol')
-        .expect(200, { protocol: 'http' }, done)
-    })
+        .expect(200, { protocol: 'http' })
+    )
 
     it('parses the cookies', function(done) {
       agent.get('/cookie')
@@ -66,69 +66,69 @@ describe('mount', function() {
     })
   })
 
-  describe('response body', function() {
-    it('accepts a buffer', function(done) {
-      agent.get('/buffer').expect(200, 'buffer', done)
-    })
+  describe('response body', () => {
+    it('accepts a buffer', () =>
+      agent.get('/buffer').expect(200, 'buffer')
+    )
 
-    it('accepts a string', function(done) {
-      agent.get('/string').expect(200, 'string', done)
-    })
+    it('accepts a string', () =>
+      agent.get('/string').expect(200, 'string')
+    )
 
-    it('accepts a stream', function(done) {
-      agent.get('/stream').expect(200, 'stream', done)
-    })
+    it('accepts a stream', () =>
+      agent.get('/stream').expect(200, 'stream')
+    )
 
-    it('accepts undefined to denote a no-content body', function(done) {
-      agent.get('/none').expect(200, done)
-    })
+    it('accepts undefined to denote a no-content body', () =>
+      agent.get('/none').expect(200)
+    )
   })
 
-  describe('response headers', function() {
-    it('accepts an object of headers', function(done) {
-      agent.get('/json').expect('content-type', 'application/json', done)
-    })
+  describe('response headers', () => {
+    it('accepts an object of headers', () =>
+      agent.get('/json').expect('content-type', 'application/json')
+    )
 
-    it('defaults the content-type to "application/octet-stream"', function(done) {
-      agent.get('/string').expect('content-type', 'application/octet-stream', done)
-    })
+    it('defaults the content-type to "application/octet-stream"', () =>
+      agent.get('/string').expect('content-type', 'application/octet-stream')
+    )
 
-    it('sets the content-length header for buffers', function(done) {
-      agent.get('/buffer').expect('content-length', '6', done)
-    })
+    it('sets the content-length header for buffers', () =>
+      agent.get('/buffer').expect('content-length', '6')
+    )
 
-    it('sets the content-length header for strings', function(done) {
-      agent.get('/string').expect('content-length', '6', done)
-    })
+    it('sets the content-length header for strings', () =>
+      agent.get('/string').expect('content-length', '6')
+    )
 
-    it('sets the etag header for buffers', function(done) {
-      agent.get('/buffer').expect('etag', '"6-fy20I6SbMFRZFHMy+wHPhw"', done)
-    })
+    it('sets the etag header for buffers', () =>
+      agent.get('/buffer').expect('etag', '"6-fy20I6SbMFRZFHMy+wHPhw"')
+    )
 
-    it('sets the etag header for strings', function(done) {
-      agent.get('/string').expect('etag', '"6-tFz/4ITdPSDZKL7oXnsPIQ"', done)
-    })
+    it('sets the etag header for strings', () =>
+      agent.get('/string').expect('etag', '"6-tFz/4ITdPSDZKL7oXnsPIQ"')
+    )
   })
 
-  describe('errors', function() {
-    it('defaults statusCode to 500', function(done) {
-      agent.get('/error').expect(500, done)
-    })
+  describe('errors', () => {
+    it('defaults statusCode to 500', () =>
+      agent.get('/error').expect(500)
+    )
 
-    it('catches and formats boom errors', function(done) {
-      agent.get('/boom').expect(404, done)
-    })
+    it('catches and formats boom errors', () =>
+      agent.get('/boom').expect(404)
+    )
 
-    it('catches and formats http-errors', function(done) {
-      agent.get('/http').expect(404, done)
-    })
+    it('catches and formats http-errors', () =>
+      agent.get('/http').expect(404)
+    )
 
-    it('catches and formats joi errors', function(done) {
-      agent.get('/joi').expect(400, done)
-    })
+    it('catches and formats joi errors', () =>
+      agent.get('/joi').expect(400)
+    )
   })
 
-  describe('logging', function() {
+  describe('logging', () => {
     it('logs and rethrows errors if errLogger supplied', function(done) {
       agent.get('/error').end((err, res) => {
         expect(errLogger.calls.length).to.equal(1)

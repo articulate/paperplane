@@ -4,7 +4,7 @@ const request = require('supertest')
 
 const { mount, routes, static } = require('..')
 
-describe('static', function() {
+describe('static', () => {
   const app = routes({
     '/foo': K({ body: 'bar' }),
     '/pub/:path+': static({ root: 'test/fixtures' })
@@ -13,11 +13,11 @@ describe('static', function() {
   const server = http.createServer(mount(app)),
         agent  = request.agent(server)
 
-  it('responds with found static files', function(done) {
-    agent.get('/pub/static-file.txt').expect(200, 'testing testing\n', done)
-  })
+  it('responds with found static files', () =>
+    agent.get('/pub/static-file.txt').expect(200, 'testing testing\n')
+  )
 
-  it('404 Not Founds for missing static files', function(done) {
-    agent.get('/pub/not-a-file.png').expect(404, done)
-  })
+  it('404 Not Founds for missing static files', () =>
+    agent.get('/pub/not-a-file.png').expect(404)
+  )
 })
