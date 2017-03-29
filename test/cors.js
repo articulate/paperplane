@@ -4,58 +4,58 @@ const request = require('supertest')
 
 const { cors, mount, send } = require('..')
 
-describe('cors', function() {
-  describe('with no options specified', function() {
+describe('cors', () => {
+  describe('with no options specified', () => {
     const app    = cors(K(send())),
           server = http.createServer(mount(app)),
           agent  = request.agent(server)
 
-    describe('receiving an OPTIONS request', function() {
-      it('responds with a 204', function(done) {
-        agent.options('/').expect(204, done)
-      })
+    describe('receiving an OPTIONS request', () => {
+      it('responds with a 204', () =>
+        agent.options('/').expect(204)
+      )
 
-      it('defaults the credentials to true', function(done) {
-        agent.options('/').expect('access-control-allow-credentials', 'true', done)
-      })
+      it('defaults the credentials to true', () =>
+        agent.options('/').expect('access-control-allow-credentials', 'true')
+      )
 
-      it('defaults the headers to "content-type"', function(done) {
-        agent.options('/').expect('access-control-allow-headers', 'content-type', done)
-      })
+      it('defaults the headers to "content-type"', () =>
+        agent.options('/').expect('access-control-allow-headers', 'content-type')
+      )
 
-      it('defaults the methods to "GET,POST,OPTIONS,PUT,PATCH,DELETE"', function(done) {
-        agent.options('/').expect('access-control-allow-methods', 'GET,POST,OPTIONS,PUT,PATCH,DELETE', done)
-      })
+      it('defaults the methods to "GET,POST,OPTIONS,PUT,PATCH,DELETE"', () =>
+        agent.options('/').expect('access-control-allow-methods', 'GET,POST,OPTIONS,PUT,PATCH,DELETE')
+      )
 
-      it('defaults the origin to "*"', function(done) {
-        agent.options('/').expect('access-control-allow-origin', '*', done)
-      })
+      it('defaults the origin to "*"', () =>
+        agent.options('/').expect('access-control-allow-origin', '*')
+      )
 
-      it('reflects the supplied "access-control-request-headers"', function(done) {
+      it('reflects the supplied "access-control-request-headers"', () =>
         agent.options('/')
           .set('access-control-request-headers', 'content-length')
-          .expect('access-control-allow-headers', 'content-length', done)
-      })
+          .expect('access-control-allow-headers', 'content-length')
+      )
 
-      it('reflects the supplied "access-control-request-method"', function(done) {
+      it('reflects the supplied "access-control-request-method"', () =>
         agent.options('/')
           .set('access-control-request-method', 'POST')
-          .expect('access-control-allow-methods', 'POST', done)
-      })
+          .expect('access-control-allow-methods', 'POST')
+      )
     })
 
-    describe('receiving the actual request', function() {
-      it('defaults the credentials to true', function(done) {
-        agent.get('/').expect('access-control-allow-credentials', 'true', done)
-      })
+    describe('receiving the actual request', () => {
+      it('defaults the credentials to true', () =>
+        agent.get('/').expect('access-control-allow-credentials', 'true')
+      )
 
-      it('defaults the origin to "*"', function(done) {
-        agent.get('/').expect('access-control-allow-origin', '*', done)
-      })
+      it('defaults the origin to "*"', () =>
+        agent.get('/').expect('access-control-allow-origin', '*')
+      )
     })
   })
 
-  describe('with options specified', function() {
+  describe('with options specified', () => {
     const opts = {
       credentials: 'false',
       headers: 'x-custom-header',
@@ -67,36 +67,36 @@ describe('cors', function() {
           server = http.createServer(mount(app)),
           agent  = request.agent(server)
 
-    describe('receiving an OPTIONS request', function() {
-      it('responds with a 204', function(done) {
-        agent.options('/').expect(204, done)
-      })
+    describe('receiving an OPTIONS request', () => {
+      it('responds with a 204', () =>
+        agent.options('/').expect(204)
+      )
 
-      it('overrides the default credentials', function(done) {
-        agent.options('/').expect('access-control-allow-credentials', opts.credentials, done)
-      })
+      it('overrides the default credentials', () =>
+        agent.options('/').expect('access-control-allow-credentials', opts.credentials)
+      )
 
-      it('overrides the default headers', function(done) {
-        agent.options('/').expect('access-control-allow-headers', opts.headers, done)
-      })
+      it('overrides the default headers', () =>
+        agent.options('/').expect('access-control-allow-headers', opts.headers)
+      )
 
-      it('overrides the default methods', function(done) {
-        agent.options('/').expect('access-control-allow-methods', opts.methods, done)
-      })
+      it('overrides the default methods', () =>
+        agent.options('/').expect('access-control-allow-methods', opts.methods)
+      )
 
-      it('overrides the default origin', function(done) {
-        agent.options('/').expect('access-control-allow-origin', opts.origin, done)
-      })
+      it('overrides the default origin', () =>
+        agent.options('/').expect('access-control-allow-origin', opts.origin)
+      )
     })
 
     describe('receiving the actual request', function () {
-      it('overrides the default credentials', function(done) {
-        agent.get('/').expect('access-control-allow-credentials', opts.credentials, done)
-      })
+      it('overrides the default credentials', () =>
+        agent.get('/').expect('access-control-allow-credentials', opts.credentials)
+      )
 
-      it('overrides the default origin', function(done) {
-        agent.get('/').expect('access-control-allow-origin', opts.origin, done)
-      })
+      it('overrides the default origin', () =>
+        agent.get('/').expect('access-control-allow-origin', opts.origin)
+      )
     })
   })
 })
