@@ -7,4 +7,5 @@ before_install:
 install:
   - yarn install --pure-lockfile
 script:
+  - yarn run hint
   - yarn test
