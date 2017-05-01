@@ -140,6 +140,8 @@ Logs will be formatted as `json`, similar to below:
 
 Maps handler functions to request methods.  Returns a handler function.  If the method of an incoming request doesn't match, it rejects with a `404 Not Found`.  Use in combination with [`routes`](#routes) to build a routing table of any complexity.
 
+**Note:** If you supply a `GET` handler, `paperplane` will also use it to handle `HEAD` requests.
+
 ```js
 const http = require('http')
 const { methods, mount } = require('paperplane')
