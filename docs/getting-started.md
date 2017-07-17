@@ -1,4 +1,4 @@
-# Getting Started
+# Getting started
 
 - [Motivation](#motivation)
 - [Basic concepts](#basic-concepts)
