@@ -1,9 +1,10 @@
-# Getting Started
+# Getting started
 
 - [Motivation](#motivation)
 - [Basic concepts](#basic-concepts)
   - [`Request` object](#request-object)
   - [`Response` object](#response-object)
+  - [Errors](#errors)
 - [Example application](#example-application)
 
 ## Motivation
