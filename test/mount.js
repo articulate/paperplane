@@ -80,7 +80,7 @@ describe('mount', () => {
     )
 
     it('accepts undefined to denote a no-content body', () =>
-      agent.get('/none').expect(200)
+      agent.get('/none').expect(200, '')
     )
   })
 
