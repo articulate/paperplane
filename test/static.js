@@ -1,4 +1,5 @@
 const { always: K  } = require('ramda')
+const { EOL } = require('os')
 const http    = require('http')
 const request = require('supertest')
 
@@ -14,7 +15,7 @@ describe('static', () => {
         agent  = request.agent(server)
 
   it('responds with found static files', () =>
-    agent.get('/pub/static-file.txt').expect(200, 'testing testing\n')
+    agent.get('/pub/static-file.txt').expect(200, 'testing testing' + EOL)
   )
 
   it('404 Not Founds for missing static files', () =>
