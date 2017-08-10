@@ -14,7 +14,8 @@
     "hint": "jshint --reporter=node_modules/jshint-stylish .",
     "start": "node demo/index.js",
     "start:dev": "nodemon -w . demo/index.js",
-    "test": "mocha --reporter dot"
+    "test": "mocha --reporter dot",
+    "test:dev": "yarn run test -- -w"
   },
   "dependencies": {
     "boom": "^5.1.0",
