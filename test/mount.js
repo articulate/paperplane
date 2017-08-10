@@ -66,6 +66,24 @@ describe('mount', () => {
     })
   })
 
+  describe('request headers', () => {
+    describe('if-none-match header does not match etag', () => {
+      it('returns 200 with full response body', () =>
+        agent.get('/string').set({ 'if-none-match': '"not-the-right-etag"' })
+          .expect(200, 'string')
+          .expect('etag', '"6-tFz/4ITdPSDZKL7oXnsPIQ"')
+      )
+    })
+
+    describe('if-none-match header matches etag', () => {
+      it('returns 304 with empty response body', () =>
+        agent.get('/string').set({ 'if-none-match': '"6-tFz/4ITdPSDZKL7oXnsPIQ"' })
+          .expect(304, '')
+          .expect('etag', '"6-tFz/4ITdPSDZKL7oXnsPIQ"')
+      )
+    })
+  })
+
   describe('response body', () => {
     it('accepts a buffer', () =>
       agent.get('/buffer').expect(200, 'buffer')
