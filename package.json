@@ -1,6 +1,6 @@
 {
   "name": "paperplane",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lighter-than-air server framework",
   "main": "index.js",
   "repository": "git@github.com:articulate/paperplane.git",
