@@ -124,7 +124,7 @@ Your handler function needs to return a `Response` object, or a `Promise` that r
 
 | Property | Type | Details |
 | -------- | ---- | ------- |
-| `body` | `Buffer | Stream | String` | can also be falsy for an empty body |
+| `body` | `Buffer`,`Stream`,`String` | can also be falsy for an empty body |
 | `headers` | `Object` | defaults to `{}` |
 | `statusCode` | `Number` | defaults to `200` |
 
