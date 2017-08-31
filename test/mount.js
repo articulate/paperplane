@@ -82,6 +82,14 @@ describe('mount', () => {
           .expect('etag', '"6-tFz/4ITdPSDZKL7oXnsPIQ"')
       )
     })
+
+    describe('when content-length is "0"', () => {
+      it('does not parse the body', () =>
+        agent.get('/body')
+          .set('content-length', '0')
+          .expect(200)
+      )
+    })
   })
 
   describe('response body', () => {
