@@ -7,9 +7,10 @@ const Joi     = require('joi')
 const request = require('supertest')
 const str     = require('string-to-stream')
 
+const assertBody              = require('./lib/assertBody')
 const { json, mount, routes } = require('..')
-const promisify = require('./lib/promisify')
-const spy = require('./lib/spy')
+const promisify               = require('./lib/promisify')
+const spy                     = require('./lib/spy')
 
 const validate = promisify(Joi.validate, Joi)
 
@@ -42,7 +43,7 @@ describe('mount', () => {
 
   describe('request', () => {
     it('reads the whole body', () =>
-      agent.post('/body').send('body').expect(200, 'body')
+      agent.post('/body').send('body').expect(200).then(assertBody('body'))
     )
 
     it('parses the pathname and query', () =>
@@ -70,8 +71,9 @@ describe('mount', () => {
     describe('if-none-match header does not match etag', () => {
       it('returns 200 with full response body', () =>
         agent.get('/string').set({ 'if-none-match': '"not-the-right-etag"' })
-          .expect(200, 'string')
+          .expect(200)
           .expect('etag', '"6-tFz/4ITdPSDZKL7oXnsPIQ"')
+          .then(assertBody('string'))
       )
     })
 
@@ -94,11 +96,11 @@ describe('mount', () => {
 
   describe('response body', () => {
     it('accepts a buffer', () =>
-      agent.get('/buffer').expect(200, 'buffer')
+      agent.get('/buffer').expect(200).then(assertBody('buffer'))
     )
 
     it('accepts a string', () =>
-      agent.get('/string').expect(200, 'string')
+      agent.get('/string').expect(200).then(assertBody('string'))
     )
 
     it('accepts a stream', () =>

@@ -2,6 +2,7 @@ const { always: K } = require('ramda')
 const http    = require('http')
 const request = require('supertest')
 
+const assertBody         = require('./lib/assertBody')
 const { methods, mount } = require('..')
 
 describe('methods', function() {
@@ -14,7 +15,7 @@ describe('methods', function() {
         agent  = request.agent(server)
 
   it('routes to the handler matching the request method', () =>
-    agent.get('/').expect(200, 'GET')
+    agent.get('/').expect(200).then(assertBody('GET'))
   )
 
   it('also responds to HEAD if GET provided', () =>
