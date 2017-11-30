@@ -1,16 +1,17 @@
 const { always: K } = require('ramda')
 const http    = require('http')
 const request = require('supertest')
+const Boom = require('boom')
 
 const { cors, mount, send } = require('..')
 
 describe('cors', () => {
   describe('with no options specified', () => {
-    const app    = cors(K(send())),
-          server = http.createServer(mount(app)),
-          agent  = request.agent(server)
-
     describe('receiving an OPTIONS request', () => {
+      const app    = cors(K(send())),
+            server = http.createServer(mount(app)),
+            agent  = request.agent(server)
+
       it('responds with a 204', () =>
         agent.options('/').expect(204)
       )
@@ -45,13 +46,63 @@ describe('cors', () => {
     })
 
     describe('receiving the actual request', () => {
-      it('defaults the credentials to true', () =>
-        agent.get('/').expect('access-control-allow-credentials', 'true')
-      )
+      describe('when the request succeeds', () => {
+        const app    = cors(K(send())),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
 
-      it('defaults the origin to "*"', () =>
-        agent.get('/').expect('access-control-allow-origin', '*')
-      )
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
+
+      describe('when the request fails with boom', () => {
+        const app    = cors(() => { throw Boom.notFound() }),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
+
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
+
+      describe('when the request fails with joi', () => {
+        const app = cors(() => { throw Object.assign(new Error(), {
+                isJoi: true, // quack
+              }) }),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
+
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
+
+       describe('when the request fails', () => {
+        const app    = cors(() => { throw new Error('foobar') }),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
+
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
     })
   })
 
