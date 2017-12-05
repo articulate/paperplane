@@ -1,8 +1,13 @@
 const { always: K } = require('ramda')
+const Boom    = require('boom')
 const http    = require('http')
 const request = require('supertest')
 
 const { cors, mount, send } = require('..')
+
+const boomError   = () => { throw Boom.notFound() }
+const joiError    = () => { throw Object.assign(new Error(), { isJoi: true }) }
+const systemError = () => { throw new Error() }
 
 describe('cors', () => {
   describe('with no options specified', () => {
@@ -45,13 +50,61 @@ describe('cors', () => {
     })
 
     describe('receiving the actual request', () => {
-      it('defaults the credentials to true', () =>
-        agent.get('/').expect('access-control-allow-credentials', 'true')
-      )
+      describe('when the request succeeds', () => {
+        const app    = cors(K(send())),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
 
-      it('defaults the origin to "*"', () =>
-        agent.get('/').expect('access-control-allow-origin', '*')
-      )
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
+
+      describe('when the request fails with boom', () => {
+        const app    = cors(boomError),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
+
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
+
+      describe('when the request fails with joi', () => {
+        const app = cors(joiError),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
+
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
+
+      describe('when the request fails', () => {
+        const app    = cors(systemError),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
+
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
     })
   })
 
