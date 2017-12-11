@@ -64,6 +64,20 @@ describe('cors', () => {
         )
       })
 
+      describe('when the request succeeds, no content', () => {
+        const app    = cors(K({ statusCode: 204 })),
+              server = http.createServer(mount(app)),
+              agent  = request.agent(server)
+
+        it('defaults the credentials to true', () =>
+          agent.get('/').expect('access-control-allow-credentials', 'true')
+        )
+
+        it('defaults the origin to "*"', () =>
+          agent.get('/').expect('access-control-allow-origin', '*')
+        )
+      })
+
       describe('when the request fails with boom', () => {
         const app    = cors(boomError),
               server = http.createServer(mount(app)),
