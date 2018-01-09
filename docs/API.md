@@ -1,21 +1,23 @@
 # API
 
-- [`cors`](#cors)           - CORS support wrapper
-- [`html`](#html)           - response helper, type `text/html`
-- [`json`](#json)           - response helper, type `application/json`
-- [`logger`](#logger)       - json request logger
-- [`methods`](#methods)     - maps request methods to handler functions
-- [`mount`](#mount)         - top-level server function wrapper
-- [`parseJson`](#parsejson) - json body parser
-- [`redirect`](#redirect)   - redirect response helper
-- [`routes`](#routes)       - maps express-style route patterns to handler functions
-- [`send`](#send)           - basic response helper
-- [`static`](#static)       - static file serving handler
+| Function | Description |
+| -------- | ----------- |
+| [`cors`](#cors) | CORS support wrapper |
+| [`html`](#html) | response helper, type `text/html` |
+| [`json`](#json) | response helper, type `application/json` |
+| [`logger`](#logger) | json request logger |
+| [`methods`](#methods) | maps request methods to handler functions |
+| [`mount`](#mount) | top-level server function wrapper |
+| [`parseJson`](#parsejson) | json body parser |
+| [`redirect`](#redirect) | redirect response helper |
+| [`routes`](#routes) | maps express-style route patterns to handler functions |
+| [`send`](#send) | basic response helper |
+| [`serve`](#serve) | static file serving handler |
 
 ### cors
 
 ```haskell
-((Request -> (Response | Promise Response)), Object) -> Request -> Promise Response
+cors :: ((Request -> (Response | Promise Response)), Object) -> Request -> Promise Response
 ```
 
 Wraps a top-level handler function to add support for [CORS](http://devdocs.io/http/access_control_cors).  Lifts the handler into a `Promise` chain, so the handler can respond with either a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` that resolves with one.  Also accepts an object with the following optional properties to override the default CORS behavior.
@@ -26,6 +28,8 @@ Wraps a top-level handler function to add support for [CORS](http://devdocs.io/h
 | `headers` | `String` | `access-control-allow-headers` | `content-type` |
 | `methods` | `String` | `access-control-allow-methods` | `GET,POST,OPTIONS,PUT,PATCH,DELETE` |
 | `origin`  | `String` | `access-control-allow-origin` | `*` |
+
+See also [`parseJson`](#parseJson), [`serve`](#serve).
 
 ```js
 const { always } = require('ramda')
@@ -48,10 +52,12 @@ http.createServer(mount(app)).listen(3000)
 ### html
 
 ```haskell
-(String | Buffer | Stream) -> Response
+html :: (String | Buffer | Stream) -> Response
 ```
 
 Returns a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), with the `content-type` header set to `text/html`.
+
+See also [`json`](#json), [`redirect`](#redirect), [`send`](#send).
 
 ```js
 const { html } = require('paperplane')
@@ -78,10 +84,12 @@ In the example above, it resolves with a [`Response`](https://github.com/articul
 ### json
 
 ```haskell
-Object -> Response
+json :: Object -> Response
 ```
 
 Returns a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), with a `body` encoded with `JSON.stringify`, and the `content-type` header set to `application/json`.
+
+See also [`html`](#html), [`redirect`](#redirect), [`send`](#send).
 
 ```js
 const { json } = require('paperplane')
@@ -106,13 +114,19 @@ In the example above, it resolves with a [`Response`](https://github.com/articul
 ### logger
 
 ```haskell
-Object -> ()
+logger :: Object -> String
 ```
 
-Logs request/response as `json`.  Uses the following whitelists:
+Logs request/response as `json` to `console.info`.  Uses the following whitelist:
 
-- req: `['headers', 'method', 'url']`
-- res: `['statusCode']`
+```js
+{
+  req: ['headers', 'method', 'url'],
+  res: ['statusCode']
+}
+```
+
+If the logged value is an error, it only logs `['message', 'name', 'stack']`.
 
 Provided as an example logger to use with [`mount`](#mount), as below.
 
@@ -135,12 +149,14 @@ Logs will be formatted as `json`, similar to below:
 ### methods
 
 ```haskell
-{ k: (Request -> (Response | Promise Response)) } -> (Request -> Promise Response)
+methods :: { k: (Request -> (Response | Promise Response)) } -> (Request -> Promise Response)
 ```
 
 Maps handler functions to request methods.  Returns a handler function.  If the method of an incoming request doesn't match, it rejects with a `404 Not Found`.  Use in combination with [`routes`](#routes) to build a routing table of any complexity.
 
 **Note:** If you supply a `GET` handler, `paperplane` will also use it to handle `HEAD` requests.
+
+See also [`mount`](#mount), [`routes`](#routes).
 
 ```js
 const http = require('http')
@@ -159,12 +175,14 @@ http.createServer(mount(app)).listen(3000)
 ### mount
 
 ```haskell
-((Request -> (Response | Promise Response)), Object) -> (IncomingMessage, ServerResponse) -> ()
+mount :: ((Request -> (Response | Promise Response)), Object) -> (IncomingMessage, ServerResponse) -> ()
 ```
 
 Wraps a top-level handler function to prepare for mounting as a new `http` server.  Lifts the handler into a `Promise` chain, so the handler can respond with either a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` that resolves with one.  Also accepts an options object with `errLogger` and `logger` properties, both of which can be set to [`logger`](#logger).
 
 **Note:**  The `errLogger` option is primarily intended for logging, not notifying your error aggregation service.  For that you will need to wrap your top-level handler function with [`paperplane-airbrake`](https://github.com/articulate/paperplane-airbrake) or something similar.
+
+See also [`methods`](#methods), [`routes`](#routes).
 
 ```js
 const http = require('http')
@@ -181,10 +199,12 @@ http.createServer(mount(app, opts)).listen(3000)
 ### parseJson
 
 ```haskell
-Request -> Request
+parseJson :: Request -> Request
 ```
 
 Parses the request body as `json` if available, and if the `content-type` is `application/json`.  Otherwise, passes the [`Request`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#request-object) through untouched.
+
+See also [`cors`](#cors), [`serve`](#serve).
 
 ```js
 const { compose } = require('ramda')
@@ -202,12 +222,14 @@ http.createServer(mount(app)).listen(3000)
 ### redirect
 
 ```haskell
-(String, Number) -> Response
+redirect :: (String, Number) -> Response
 ```
 
 Accept a `Location` and optional `statusCode` (defaults to `302`), and returns a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object) denoting a redirect.
 
 **Pro-tip:** if you want an earlier function in your composed application to respond with a redirect and skip everything else, just wrap it in a `Promise.reject` (see example below).  The error-handling code in `paperplane` will ignore it since it's not a real error.
+
+See also [`html`](#html), [`json`](#json), [`send`](#send).
 
 ```js
 const { compose, composeP } = require('ramda')
@@ -253,10 +275,12 @@ In the example above, `redirect()` returns a [`Response`](https://github.com/art
 ### routes
 
 ```haskell
-{ k: (Request -> (Response | Promise Response)) } -> (Request -> Response)
+routes :: { k: (Request -> (Response | Promise Response)) } -> (Request -> Response)
 ```
 
 Maps handler functions to express-style route patterns.  Returns a handler function.  If the path of an incoming request doesn't match, it rejects with a `404 Not Found`.  Use in combination with [`methods`](#methods) to build a routing table of any complexity.
+
+See also [`methods`](#methods), [`mount`](#mount).
 
 ```js
 const http = require('http')
@@ -281,10 +305,12 @@ http.createServer(mount(app)).listen(3000)
 ### send
 
 ```haskell
-(String | Buffer | Stream) -> Response
+send :: (String | Buffer | Stream) -> Response
 ```
 
 The most basic response helper.  Simply accepts a `body`, and returns a properly formatted [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), without making any further assumptions.
+
+See also [`html`](#html), [`json`](#json), [`redirect`](#redirect).
 
 ```js
 const { send } = require('paperplane')
@@ -302,20 +328,24 @@ In the example above, it returns a [`Response`](https://github.com/articulate/pa
 }
 ```
 
-### static
+### serve
 
 ```haskell
-Object -> (Request -> Response)
+serve :: Object -> (Request -> Response)
 ```
 
 Accepts an options object (see [details here](https://www.npmjs.com/package/send#options)), and returns a handler function for serving static files.  Expects a `req.params.path` to be present on the [`Request`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#request-object), so you'll need to format your route pattern similar to the example below, making sure to include a `/:path+` route segment.
 
+Note: this was previously `static`, but that's a keyword, so I renamed it.
+
+See also [`cors`](#cors), [`parseJson`](#parseJson).
+
 ```js
 const http = require('http')
-const { mount, routes, static } = require('paperplane')
+const { mount, routes, serve } = require('paperplane')
 
 const app = routes({
-  '/public/:path+': static({ root: 'public' })
+  '/public/:path+': serve({ root: 'public' })
 })
 
 http.createServer(mount(app)).listen(3000)
