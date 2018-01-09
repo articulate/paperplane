@@ -3,12 +3,12 @@ const { EOL } = require('os')
 const http    = require('http')
 const request = require('supertest')
 
-const { mount, routes, static } = require('..')
+const { mount, routes, serve } = require('..')
 
-describe('static', () => {
+describe('serve', () => {
   const app = routes({
     '/foo': K({ body: 'bar' }),
-    '/pub/:path+': static({ root: 'test/fixtures' })
+    '/pub/:path+': serve({ root: 'test/fixtures' })
   })
 
   const server = http.createServer(mount(app)),

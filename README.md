@@ -25,7 +25,7 @@ With `paperplane` you get all of these out-of-the-box:
 - several common [response helpers](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object)
 - json-formatted [logging](https://github.com/articulate/paperplane/blob/master/docs/API.md#logger)
 - easily configurable [CORS support](https://github.com/articulate/paperplane/blob/master/docs/API.md#cors)
-- plug-n-play [static file serving](https://github.com/articulate/paperplane/blob/master/docs/API.md#static)
+- plug-n-play [static file serving](https://github.com/articulate/paperplane/blob/master/docs/API.md#serve)
 
 Let's try a quick Hello World example server.  It accepts a `:name` param in the url, and then includes that name in the `json` response body.
 

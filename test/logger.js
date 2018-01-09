@@ -3,6 +3,8 @@ const { expect } = require('chai')
 const { logger } = require('..')
 
 describe('logger', () => {
+  let output
+
   const message = {
     foo: 'bar',
     req: {
@@ -19,7 +21,9 @@ describe('logger', () => {
     }
   }
 
-  const output = JSON.parse(logger(message))
+  beforeEach(() =>
+    output = JSON.parse(logger(message))
+  )
 
   it('includes request headers', () => {
     expect(output.req.headers).to.be.an('object')
@@ -48,6 +52,10 @@ describe('logger', () => {
 
   it('passes thru other message properties unchanged', () =>
     expect(output.foo).to.equal('bar')
+  )
+
+  it('logs to console.info', () =>
+    expect(console.info.calls.length).to.equal(1)
   )
 
   describe('when used as the errLogger', () => {
