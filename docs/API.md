@@ -24,10 +24,18 @@ Wraps a top-level handler function to add support for [CORS](http://devdocs.io/h
 
 | Property | Type | Overridden header | Default |
 | -------- | ---- | ----------------- | ------- |
-| `credentials` | `String` | `access-control-allow-credentials` | `true` |
-| `headers` | `String` | `access-control-allow-headers` | `content-type` |
-| `methods` | `String` | `access-control-allow-methods` | `GET,POST,OPTIONS,PUT,PATCH,DELETE` |
-| `origin`  | `String` | `access-control-allow-origin` | `*` |
+| `credentials` | `String` | `access-control-allow-credentials` | `'true'` |
+| `headers` | `String` | `access-control-allow-headers` | `'content-type'` |
+| `methods` | `String` | `access-control-allow-methods` | `'GET,POST,OPTIONS,PUT,PATCH,DELETE'` |
+| `origin`  | `Any` | `access-control-allow-origin` | `'*'` |
+
+Acceptable values for `origin` are:
+
+| Value | Type | Description |
+| ----- | ---- | ----------- |
+| `'*'` | `String` | wildcard, allows any origin access, but only without credentials |
+| `true` | `Boolean` | reflect the origin of the request |
+| `/domain.com/` | `Regex` | validate the origin against regex |
 
 See also [`parseJson`](#parseJson), [`serve`](#serve).
 

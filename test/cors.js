@@ -93,7 +93,7 @@ describe('cors', () => {
       })
 
       describe('when the request fails with joi', () => {
-        const app = cors(joiError),
+        const app    = cors(joiError),
               server = http.createServer(mount(app)),
               agent  = request.agent(server)
 
@@ -126,8 +126,7 @@ describe('cors', () => {
     const opts = {
       credentials: 'false',
       headers: 'x-custom-header',
-      methods: 'GET,PUT',
-      origin: 'https://articulate.com'
+      methods: 'GET,PUT'
     }
 
     const app    = cors(K(send()), opts),
@@ -150,19 +149,55 @@ describe('cors', () => {
       it('overrides the default methods', () =>
         agent.options('/').expect('access-control-allow-methods', opts.methods)
       )
-
-      it('overrides the default origin', () =>
-        agent.options('/').expect('access-control-allow-origin', opts.origin)
-      )
     })
 
     describe('receiving the actual request', function () {
       it('overrides the default credentials', () =>
         agent.get('/').expect('access-control-allow-credentials', opts.credentials)
       )
+    })
+  })
 
-      it('overrides the default origin', () =>
-        agent.get('/').expect('access-control-allow-origin', opts.origin)
+  describe('cors origin', () => {
+    describe('when "*"', () => {
+      const opts   = { origin: '*' },
+            app    = cors(K(send()), opts),
+            server = http.createServer(mount(app)),
+            agent  = request.agent(server)
+
+      it('allows all origins', () =>
+        agent.options('/').expect('access-control-allow-origin', '*')
+      )
+    })
+
+    describe('when true', () => {
+      const origin = 'https://articulate.com'
+            opts   = { origin: true },
+            app    = cors(K(send()), opts),
+            server = http.createServer(mount(app)),
+            agent  = request.agent(server)
+
+      it('reflects the request origin', () =>
+        agent.options('/').set('origin', origin)
+          .expect('access-control-allow-origin', origin)
+      )
+    })
+
+    describe('when regex', () => {
+      const origin = 'https://dev.articulate.zone'
+            opts   = { origin: /articulate\.[com|zone]/ },
+            app    = cors(K(send()), opts),
+            server = http.createServer(mount(app)),
+            agent  = request.agent(server)
+
+      it('allows valid origins', () =>
+        agent.options('/').set('origin', origin)
+          .expect('access-control-allow-origin', origin)
+      )
+
+      it('disallows invalid origins', () =>
+        agent.options('/').set('origin', origin)
+          .expect('access-control-allow-origin', 'false')
       )
     })
   })
