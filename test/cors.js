@@ -171,7 +171,7 @@ describe('cors', () => {
     })
 
     describe('when true', () => {
-      const origin = 'https://articulate.com'
+      const origin = 'https://articulate.com',
             opts   = { origin: true },
             app    = cors(K(send()), opts),
             server = http.createServer(mount(app)),
@@ -184,8 +184,8 @@ describe('cors', () => {
     })
 
     describe('when regex', () => {
-      const origin = 'https://dev.articulate.zone'
-            opts   = { origin: /articulate\.[com|zone]/ },
+      const origin = 'https://dev.articulate.zone',
+            opts   = { origin: /\.articulate\.[com|zone]/ },
             app    = cors(K(send()), opts),
             server = http.createServer(mount(app)),
             agent  = request.agent(server)
@@ -196,7 +196,7 @@ describe('cors', () => {
       )
 
       it('disallows invalid origins', () =>
-        agent.options('/').set('origin', origin)
+        agent.options('/').set('origin', 'https://dev.notarticulate.zone')
           .expect('access-control-allow-origin', 'false')
       )
     })
