@@ -2,8 +2,10 @@ require('./lib/seed')()
 const { compose, prop } = require('ramda')
 const http = require('http')
 
-const { json, logger, methods, mount, parseJson,
-        redirect, routes, static } = require('..')
+const {
+  json, logger, methods, mount, parseJson,
+  redirect, routes, static: renderStatic
+} = require('..')
 
 const {
   createUser,
@@ -26,7 +28,7 @@ const endpoints = routes({
 
   '/cookies': compose(json, prop('cookies')),
 
-  '/public/:path+': static({ root: 'demo/public' }),
+  '/public/:path+': renderStatic({ root: 'demo/public' }),
 
   '/users': methods({
     GET:  fetchUsers,
