@@ -20,7 +20,7 @@ describe('methods', function() {
 
   it('also responds to HEAD if GET provided', () =>
     agent.head('/').expect(200)
-  );
+  )
 
   it('404 Not Founds when no matching method is found', () =>
     agent.post('/').send({}).expect(404)
