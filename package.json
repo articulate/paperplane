@@ -11,7 +11,7 @@
     "yarn": ">=0.17.4"
   },
   "scripts": {
-    "hint": "jshint --reporter=node_modules/jshint-stylish .",
+    "lint": "eslint .",
     "start": "node demo/index.js",
     "start:dev": "nodemon -w . demo/index.js",
     "test": "mocha --reporter dot",
@@ -20,6 +20,7 @@
   "dependencies": {
     "boom": "^5.1.0",
     "cookie": "^0.3.1",
+    "eslint": "^4.18.2",
     "etag": "^1.7.0",
     "media-typer": "^0.3.0",
     "path-match": "^1.2.4",
@@ -34,8 +35,6 @@
     "chai": "^3.5.0",
     "http-errors": "^1.6.1",
     "joi": "^10.2.0",
-    "jshint": "^2.9.4",
-    "jshint-stylish": "^2.2.1",
     "levelup": "^1.3.3",
     "memdown": "^1.2.4",
     "mocha": "^3.2.0",
