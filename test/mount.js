@@ -92,6 +92,15 @@ describe('mount', () => {
           .expect(200)
       )
     })
+
+    describe('when content-type is missing', () => {
+      it('does not explode', () =>
+        agent.post('/body')
+          .send('body')
+          .set('content-type', '')
+          .expect(200)
+      )
+    })
   })
 
   describe('response body', () => {
