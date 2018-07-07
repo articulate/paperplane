@@ -1,5 +1,5 @@
 const { assoc } = require('ramda')
-const { json }  = require('../..')
+const { json, redirect }  = require('../..')
 
 const db = require('../lib/db')('users')
 
@@ -15,6 +15,9 @@ exports.fetchUser = req =>
 exports.fetchUsers = () =>
   db.where({ keys: false })
     .then(json)
+
+exports.oldUsers = () =>
+  redirect('/api/users')
 
 exports.updateUser = req =>
   db.patch(assoc('id', req.params.id, req.body))

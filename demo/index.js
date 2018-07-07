@@ -1,52 +1,14 @@
 require('./lib/seed')()
-const { compose, prop } = require('ramda')
+
+const { compose } = require('ramda')
 const http = require('http')
+const { mount, parseJson } = require('..')
 
-const {
-  json, logger, methods, mount, parseJson,
-  redirect, routes, static: renderStatic
-} = require('..')
-
-const {
-  createUser,
-  fetchUser,
-  fetchUsers,
-  updateUser
-} = require('./api/users')
-
-const { home } = require('./api/pages')
+const logger = require('./lib/logger')
+const routes = require('./routes')
 
 const port = process.env.PORT || 3000
 
-const listening = err =>
-  err ? console.error(err) : console.info(`Listening on port: ${port}`)
+const app = compose(routes, parseJson)
 
-const endpoints = routes({
-  '/': methods({
-    GET: home
-  }),
-
-  '/cookies': compose(json, prop('cookies')),
-
-  '/public/:path+': renderStatic({ root: 'demo/public' }),
-
-  '/users': methods({
-    GET:  fetchUsers,
-    POST: createUser
-  }),
-
-  '/users/:id': methods({
-    GET:   fetchUser,
-    PATCH: updateUser,
-    PUT:   updateUser
-  }),
-
-  '/error': () => { throw new Error('this code is broken') },
-
-  '/old-users': () => redirect('/users')
-})
-
-const app  = compose(endpoints, parseJson)
-const opts = { errLogger: logger, logger }
-
-http.createServer(mount(app, opts)).listen(port, listening)
+http.createServer(mount({ app, logger })).listen(port, logger)
