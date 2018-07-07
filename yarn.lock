@@ -2,6 +2,12 @@
 # yarn lockfile v1
 
 
+"@articulate/funky@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@articulate/funky/-/funky-1.3.0.tgz#dacfd1539ae62f44f0db59383ca679e764816991"
+  dependencies:
+    ramda "^0.25.0"
+
 "@articulate/spy@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@articulate/spy/-/spy-0.0.1.tgz#2da9fdb919075fa5fc3868017e17b43b8528a399"
@@ -1991,6 +1997,10 @@ qs@^6.5.1:
 ramda@^0.23.0:
   version "0.23.0"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.23.0.tgz#ccd13fff73497a93974e3e86327bfd87bd6e8e2b"
+
+ramda@^0.25.0:
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.25.0.tgz#8fdf68231cffa90bc2f9460390a0cb74a29b29a9"
 
 randomatic@^1.1.3:
   version "1.1.6"
