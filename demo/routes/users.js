@@ -1,5 +1,5 @@
 const { assoc } = require('ramda')
-const { json, redirect }  = require('../..')
+const { json, redirect } = require('../..')
 
 const db = require('../lib/db')('users')
 
