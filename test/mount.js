@@ -1,11 +1,13 @@
 const { always: K, compose, pick, prop } = require('ramda')
+const { Async }    = require('crocks')
 const { expect }   = require('chai')
 const { NotFound } = require('http-errors')
-const Boom    = require('boom')
-const http    = require('http')
-const Joi     = require('joi')
-const request = require('supertest')
-const str     = require('string-to-stream')
+const Boom         = require('boom')
+const future       = require('redux-future').default
+const http         = require('http')
+const Joi          = require('joi')
+const request      = require('supertest')
+const str          = require('string-to-stream')
 
 const assertBody              = require('./lib/assertBody')
 const { json, mount, routes } = require('..')
@@ -101,6 +103,12 @@ describe('mount', () => {
           .expect(200)
       )
     })
+
+    it('uses x-forwarded-proto when present', () =>
+      agent.get('/protocol')
+        .set('x-forwarded-proto', 'https')
+        .expect(200, { protocol: 'https' })
+    )
   })
 
   describe('response body', () => {
@@ -183,5 +191,28 @@ describe('mount', () => {
         done()
       })
     })
+  })
+
+  describe('when called with no options', () => {
+    const server = http.createServer(mount())
+    const agent  = request.agent(server)
+
+    it('acts as an echo server', () =>
+      agent.post('/').send({ a: 'b' }).expect(200, { a: 'b' })
+    )
+  })
+
+  describe('when supplied with redux middleware', () => {
+    const app = routes({
+      '/async': () => Async.of({ body: 'async' })
+    })
+
+    const middleware = [ future ]
+    const server     = http.createServer(mount({ app, middleware }))
+    const agent      = request.agent(server)
+
+    it('supports handlers that return ADTs', () =>
+      agent.get('/async').expect(200).then(assertBody('async'))
+    )
   })
 })
