@@ -9,10 +9,20 @@
   "engines": {
     "node": ">=6"
   },
+  "nyc": {
+    "check-coverage": true,
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100
+  },
   "scripts": {
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
     "start": "nodemon -w demo -w lib demo/index.js",
-    "test": "mocha --reporter dot"
+    "test": "mocha --reporter dot",
+    "test:ci": "yarn run lint && yarn run test:coverage && yarn run coverage",
+    "test:coverage": "nyc yarn run test"
   },
   "dependencies": {
     "@articulate/funky": "^1.3.0",
@@ -38,6 +48,7 @@
     "memdown": "^1.2.4",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
+    "nyc": "^12.0.2",
     "pug": "^2.0.0-beta6",
     "redux-future": "^0.0.11",
     "string-to-stream": "^1.1.0",
