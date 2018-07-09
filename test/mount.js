@@ -31,13 +31,13 @@ describe('mount', () => {
     '/url':      compose(json, pick(['pathname', 'query']))
   })
 
-  const errLogger = spy(),
-        logger    = spy(),
-        server    = http.createServer(mount(app, { errLogger, logger })),
-        agent     = request.agent(server)
+  const cry    = spy()
+  const logger = spy()
+  const server = http.createServer(mount({ app, cry, logger }))
+  const agent  = request.agent(server)
 
   afterEach(() => {
-    errLogger.reset()
+    cry.reset()
     logger.reset()
   })
 
@@ -166,9 +166,10 @@ describe('mount', () => {
   })
 
   describe('logging', () => {
-    it('logs and rethrows errors if errLogger supplied', function(done) {
+    it('logs errors to supplied cry function', function(done) {
       agent.get('/error').end((err, res) => {
-        expect(errLogger.calls.length).to.equal(1)
+        expect(cry.calls.length).to.equal(1)
+        expect(cry.calls[0].req).to.exist
         expect(res.statusCode).to.equal(500)
         done()
       })
