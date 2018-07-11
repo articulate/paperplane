@@ -5,7 +5,7 @@
   Lighter-than-air node.js server framework.
 </p>
 <p align="center">
-  <a href="https://www.npmjs.com/package/paperplane"><img src="https://img.shields.io/npm/v/paperplane.svg" alt="npm version" style="max-width:100%;"></a> <a href="https://www.npmjs.com/package/paperplane"><img src="https://img.shields.io/npm/dm/paperplane.svg" alt="npm downloads" style="max-width:100%;"></a> <a href="https://travis-ci.org/articulate/paperplane"><img src="https://travis-ci.org/articulate/paperplane.svg?branch=master" alt="Build Status" style="max-width:100%;"></a> <a href="https://nodesecurity.io/orgs/articulate/projects/103be316-79be-4dd0-9d9c-73674b8ad85b"><img src="https://nodesecurity.io/orgs/articulate/projects/103be316-79be-4dd0-9d9c-73674b8ad85b/badge" alt="NSP Vuln Status"></a>
+  <a href="https://www.npmjs.com/package/paperplane"><img src="https://img.shields.io/npm/v/paperplane.svg" alt="npm version" style="max-width:100%;"></a> <a href="https://www.npmjs.com/package/paperplane"><img src="https://img.shields.io/npm/dm/paperplane.svg" alt="npm downloads" style="max-width:100%;"></a> <a href="https://travis-ci.org/articulate/paperplane"><img src="https://travis-ci.org/articulate/paperplane.svg?branch=master" alt="Build Status" style="max-width:100%;"></a> <a href='https://coveralls.io/github/articulate/paperplane?branch=v2'><img src='https://coveralls.io/repos/github/articulate/paperplane/badge.svg?branch=v2' alt='Coverage Status' /></a> <a href="https://nodesecurity.io/orgs/articulate/projects/103be316-79be-4dd0-9d9c-73674b8ad85b"><img src="https://nodesecurity.io/orgs/articulate/projects/103be316-79be-4dd0-9d9c-73674b8ad85b/badge" alt="NSP Vuln Status"></a>
 </p>
 
 ## Documentation
@@ -44,9 +44,7 @@ const app = routes({
   })
 })
 
-const opts = { errLogger: logger, logger }
-
-http.createServer(mount(app, opts)).listen(3000, logger)
+http.createServer(mount({ app })).listen(3000, logger)
 ```
 
 So simple and functional, with an easily readable routing table and pure functions for the route handler.  If that sounds like fun to you, then read the [Getting started guide](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md) or the [API docs](https://github.com/articulate/paperplane/blob/master/docs/API.md) to learn more.
