@@ -2,19 +2,17 @@ const { always: K, compose, pick, prop } = require('ramda')
 const { Async }    = require('crocks')
 const { expect }   = require('chai')
 const { NotFound } = require('http-errors')
+const { validate } = require('@articulate/funky')
 const Boom         = require('boom')
 const future       = require('redux-future').default
 const http         = require('http')
 const Joi          = require('joi')
 const request      = require('supertest')
+const spy          = require('@articulate/spy')
 const str          = require('string-to-stream')
 
 const assertBody              = require('./lib/assertBody')
 const { json, mount, routes } = require('..')
-const promisify               = require('./lib/promisify')
-const spy                     = require('./lib/spy')
-
-const validate = promisify(Joi.validate, Joi)
 
 describe('mount', () => {
   const app = routes({
@@ -24,7 +22,7 @@ describe('mount', () => {
     '/cookie':   compose(json, prop('cookies')),
     '/error':    () => { throw new Error('error') },
     '/http':     () => { throw new NotFound() },
-    '/joi':      () => validate(123, Joi.string()),
+    '/joi':      () => validate(Joi.string(), 123),
     '/json':     K(json({})),
     '/protocol': compose(json, pick(['protocol'])),
     '/none':     K({ body: undefined }),
@@ -177,7 +175,7 @@ describe('mount', () => {
     it('logs errors to supplied cry function', function(done) {
       agent.get('/error').end((err, res) => {
         expect(cry.calls.length).to.equal(1)
-        expect(cry.calls[0].req).to.exist
+        expect(cry.calls[0][0].req).to.exist
         expect(res.statusCode).to.equal(500)
         done()
       })
@@ -186,8 +184,8 @@ describe('mount', () => {
     it('logs requests and responses', function(done) {
       agent.get('/string').end(() => {
         expect(logger.calls.length).to.equal(1)
-        expect(logger.calls[0].req).to.exist
-        expect(logger.calls[0].res).to.exist
+        expect(logger.calls[0][0].req).to.exist
+        expect(logger.calls[0][0].res).to.exist
         done()
       })
     })
