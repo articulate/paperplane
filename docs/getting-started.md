@@ -97,7 +97,7 @@ const app = req => ({
   statusCode: 200
 })
 
-http.createServer(mount(app)).listen(3000)
+http.createServer(mount({ app })).listen(3000)
 ```
 
 Before we get much further we should go over the `Request` and `Response` objects.
