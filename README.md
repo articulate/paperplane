@@ -12,6 +12,7 @@
 
 - [Getting started guide](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md)
 - [API docs](https://github.com/articulate/paperplane/blob/master/docs/API.md)
+- [Migration guide](https://github.com/articulate/paperplane/blob/master/docs/migration-guide.md)
 
 ## Introduction
 
