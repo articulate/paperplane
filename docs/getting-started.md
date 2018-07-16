@@ -197,4 +197,4 @@ A handler function like above will send the client a `400` response with this bo
 
 ## Example application
 
-TODO: but for now you can peruse the [demo](https://github.com/articulate/paperplane/blob/master/demo).
+Your best bet is to peruse the [demo](https://github.com/articulate/paperplane/blob/master/demo) and the [tests](https://github.com/articulate/paperplane/blob/master/test/mount.js).  Between the two, they cover all the basics.

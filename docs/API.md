@@ -193,20 +193,21 @@ mount :: { k: v } -> (IncomingMessage, ServerResponse) -> ()
 
 Wraps a top-level handler function to prepare for mounting as a new `http` server.  Lifts the handler into a `Promise` chain, so the handler can respond with either a synchronous [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` or other ADT that resolves with one.  Accepts the following options:
 
+
 | Option | Type | Default | Description |
 | ------ | ---- | ------- | ----------- |
-| `app` | `Request -> m Response` | `R.identity` | top-level request handler function |
-| `cry` | `Error -> a` | `paperplane.logger` | error logger |
-| `logger` | `a -> a` | `paperplane.logger` | request/response logger |
+| `app` | `Request -> m Response` | [`R.identity`](http://devdocs.io/ramda/index#identity) | top-level request handler function |
+| `cry` | `Error -> a` | [`paperplane.logger`](#logger) | error logger |
+| `logger` | `a -> a` | [`paperplane.logger`](#logger) | request/response logger |
 | `middleware` | `[ ReduxMiddleware ]` | `[]` | list of Redux middleware for unwrapping ADT's |
 
 The `cry` option is primarily intended for logging, but is also the correct way to notify your error aggregation service.  All errors passed to the `cry` function will have a `req` property that can be used to include request information in your notification.  For notifying [Airbrake](https://airbrake.io/), use the latest version of [`paperplane-airbrake`](https://github.com/articulate/paperplane-airbrake) for this option.
 
-To support request handlers that return ADT's (such as those provided by the lovely [`crocks`](https://evilsoft.github.io/crocks/) library), register a list of appropriate Redux middleware using the `middleware` option.  No, `paperplane` does not use Redux, but Redux middleware make for great little plugins to recursively unwrap ADT's.  You won't need `redux-promise`, because `Promise` support is already included, but some common middlewares that may interest you are:
+To support request handlers that return ADT's (such as those provided by the lovely [`crocks`](https://github.com/evilsoft/crocks) library), register a list of appropriate Redux middleware using the `middleware` option.  No, `paperplane` does not use Redux, but Redux middleware make for great little plugins to recursively unwrap ADT's.  You won't need [`redux-promise`](https://github.com/redux-utilities/redux-promise), because `Promise` support is already included, but some common middlewares that may interest you are:
 
-- [`redux-future2`]()
-- [`redux-io`]()
-- [`redux-functor`]()
+- [`redux-future2`](https://github.com/articulate/redux-future2)
+- [`redux-io`](https://github.com/stoeffel/redux-io)
+- [`redux-functor`](https://github.com/articulate/redux-functor)
 
 See also [`methods`](#methods), [`routes`](#routes).
 
