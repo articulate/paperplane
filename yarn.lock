@@ -696,9 +696,9 @@ coveralls@^3.0.2:
     minimist "^1.2.0"
     request "^2.85.0"
 
-crocks@^0.9.4:
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/crocks/-/crocks-0.9.4.tgz#bc4e13da4b3173a8e48af0a620dc83ee7c4b22b0"
+crocks@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/crocks/-/crocks-0.10.1.tgz#be545fe089aeba301cc75868aac82efc9c2b3245"
 
 cross-spawn@^4:
   version "4.0.2"
