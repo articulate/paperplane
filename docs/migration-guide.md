@@ -57,6 +57,6 @@ Read more about the new `cry` option [here](./API.md#mount).
 
 ### New feature
 
-The `mount` function has gained a new `middleware` option to support request handlers that return ADT's.  To take advantage of this, register a list of appropriate Redux middleware.
+The `mount` function has gained a new `middleware` option to support request handlers that return [Algebraic Data Types](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#what-are-algebraic-data-types).  To take advantage of this, register a list of appropriate Redux middleware.
 
 For more details, see the [`mount` docs](./API.md#mount).
