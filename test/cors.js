@@ -11,9 +11,9 @@ const systemError = () => { throw new Error() }
 
 describe('cors', () => {
   describe('with no options specified', () => {
-    const app    = cors(K(send())),
-          server = http.createServer(mount(app)),
-          agent  = request.agent(server)
+    const app    = cors(K(send()))
+    const server = http.createServer(mount({ app }))
+    const agent  = request.agent(server)
 
     describe('receiving an OPTIONS request', () => {
       it('responds with a 204', () =>
@@ -51,9 +51,9 @@ describe('cors', () => {
 
     describe('receiving the actual request', () => {
       describe('when the request succeeds', () => {
-        const app    = cors(K(send())),
-              server = http.createServer(mount(app)),
-              agent  = request.agent(server)
+        const app    = cors(K(send()))
+        const server = http.createServer(mount({ app }))
+        const agent  = request.agent(server)
 
         it('defaults the credentials to true', () =>
           agent.get('/').expect('access-control-allow-credentials', 'true')
@@ -65,9 +65,9 @@ describe('cors', () => {
       })
 
       describe('when the request succeeds, no content', () => {
-        const app    = cors(K({ statusCode: 204 })),
-              server = http.createServer(mount(app)),
-              agent  = request.agent(server)
+        const app    = cors(K({ statusCode: 204 }))
+        const server = http.createServer(mount({ app }))
+        const agent  = request.agent(server)
 
         it('defaults the credentials to true', () =>
           agent.get('/').expect('access-control-allow-credentials', 'true')
@@ -79,9 +79,9 @@ describe('cors', () => {
       })
 
       describe('when the request fails with boom', () => {
-        const app    = cors(boomError),
-              server = http.createServer(mount(app)),
-              agent  = request.agent(server)
+        const app    = cors(boomError)
+        const server = http.createServer(mount({ app }))
+        const agent  = request.agent(server)
 
         it('defaults the credentials to true', () =>
           agent.get('/').expect('access-control-allow-credentials', 'true')
@@ -93,9 +93,9 @@ describe('cors', () => {
       })
 
       describe('when the request fails with joi', () => {
-        const app    = cors(joiError),
-              server = http.createServer(mount(app)),
-              agent  = request.agent(server)
+        const app    = cors(joiError)
+        const server = http.createServer(mount({ app }))
+        const agent  = request.agent(server)
 
         it('defaults the credentials to true', () =>
           agent.get('/').expect('access-control-allow-credentials', 'true')
@@ -107,9 +107,9 @@ describe('cors', () => {
       })
 
       describe('when the request fails', () => {
-        const app    = cors(systemError),
-              server = http.createServer(mount(app)),
-              agent  = request.agent(server)
+        const app    = cors(systemError)
+        const server = http.createServer(mount({ app }))
+        const agent  = request.agent(server)
 
         it('defaults the credentials to true', () =>
           agent.get('/').expect('access-control-allow-credentials', 'true')
@@ -129,9 +129,9 @@ describe('cors', () => {
       methods: 'GET,PUT'
     }
 
-    const app    = cors(K(send()), opts),
-          server = http.createServer(mount(app)),
-          agent  = request.agent(server)
+    const app    = cors(K(send()), opts)
+    const server = http.createServer(mount({ app }))
+    const agent  = request.agent(server)
 
     describe('receiving an OPTIONS request', () => {
       it('responds with a 204', () =>
@@ -160,10 +160,10 @@ describe('cors', () => {
 
   describe('cors origin', () => {
     describe('when "*"', () => {
-      const opts   = { origin: '*' },
-            app    = cors(K(send()), opts),
-            server = http.createServer(mount(app)),
-            agent  = request.agent(server)
+      const opts   = { origin: '*' }
+      const app    = cors(K(send()), opts)
+      const server = http.createServer(mount({ app }))
+      const agent  = request.agent(server)
 
       it('allows all origins', () =>
         agent.options('/').expect('access-control-allow-origin', '*')
@@ -171,11 +171,11 @@ describe('cors', () => {
     })
 
     describe('when true', () => {
-      const origin = 'https://articulate.com',
-            opts   = { origin: true },
-            app    = cors(K(send()), opts),
-            server = http.createServer(mount(app)),
-            agent  = request.agent(server)
+      const origin = 'https://articulate.com'
+      const opts   = { origin: true }
+      const app    = cors(K(send()), opts)
+      const server = http.createServer(mount({ app }))
+      const agent  = request.agent(server)
 
       it('reflects the request origin', () =>
         agent.options('/').set('origin', origin)
@@ -184,11 +184,11 @@ describe('cors', () => {
     })
 
     describe('when regex', () => {
-      const origin = 'https://dev.articulate.zone',
-            opts   = { origin: /\.articulate\.[com|zone]/ },
-            app    = cors(K(send()), opts),
-            server = http.createServer(mount(app)),
-            agent  = request.agent(server)
+      const origin = 'https://dev.articulate.zone'
+      const opts   = { origin: /\.articulate\.[com|zone]/ }
+      const app    = cors(K(send()), opts)
+      const server = http.createServer(mount({ app }))
+      const agent  = request.agent(server)
 
       it('allows valid origins', () =>
         agent.options('/').set('origin', origin)

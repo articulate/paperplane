@@ -6,6 +6,7 @@
   - [`Response` object](#response-object)
   - [Errors](#errors)
 - [Example application](#example-application)
+- [What are Algebraic Data Types?](#what-are-algebraic-data-types)
 
 ## Motivation
 
@@ -82,7 +83,7 @@ Well that's pretty close to what we're looking for, but the function signature f
 Instead we'd prefer a pure function that accepts a request-like input and returns a response-like output:
 
 ```haskell
-Request -> Response
+Request -> Promise Response
 ```
 
 To help with that transformation, `paperplane` provides the [`mount`](https://github.com/articulate/paperplane/blob/master/docs/API.md#mount) function:
@@ -97,7 +98,7 @@ const app = req => ({
   statusCode: 200
 })
 
-http.createServer(mount(app)).listen(3000)
+http.createServer(mount({ app })).listen(3000)
 ```
 
 Before we get much further we should go over the `Request` and `Response` objects.
@@ -197,4 +198,16 @@ A handler function like above will send the client a `400` response with this bo
 
 ## Example application
 
-TODO: but for now you can peruse the [demo](https://github.com/articulate/paperplane/blob/master/demo).
+Your best bet is to peruse the [demo](https://github.com/articulate/paperplane/blob/master/demo) and the [tests](https://github.com/articulate/paperplane/blob/master/test/mount.js).  Between the two, they cover all the basics.
+
+## What are Algebraic Data Types?
+
+If you've been exposed to functional programming at all, it's possible that you've heard fun words like `monad`, `monoid`, or even `functor` tossed around in conversation.  Types such as `Future`, `Maybe`, or `IO` are good examples of ADT's.  These are tools that can make your job easier in different ways, and if you want to take advantage of them in `paperplane`, there is now [customizable support for that](https://github.com/articulate/paperplane/blob/master/docs/API.md#mount).
+
+Please note that knowledge of such arcane functional magic is not required to harness the power of `paperplane`.  Promise-based request handlers are supported without any additional configuration, so feel free to stick with native Promises if that is where you're most comfortable.
+
+However, if you wish to take the red pill, and see how deep the rabbit hole goes, here are some resources for further study on ADT's:
+
+- [_Professor Frisby's Mostly Adequate Guide to Function Programming_](https://mostly-adequate.gitbooks.io/mostly-adequate-guide/)
+- Bartosz Milewski's _Category Theory for programmers_ - [Part 1](https://www.youtube.com/playlist?list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_), [Part 2](https://www.youtube.com/playlist?list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm), [Part 3](https://www.youtube.com/playlist?list=PLbgaMIhjbmEn64WVX4B08B4h2rOtueWIL)
+- [`crocks`](https://github.com/evilsoft/crocks) - a collection of well known Algebraic Data Types in javascript

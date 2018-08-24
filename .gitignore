@@ -1,6 +1,5 @@
-node_modules
-
-.DS_Store
-.env
-docker-compose.override.yml
 *.log
+.DS_Store
+.nyc_output
+.yarn*
+node_modules

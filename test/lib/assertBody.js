@@ -1,8 +1,8 @@
-const { curry, propSatisfies } = require('ramda')
+const { compose, curry, prop } = require('ramda')
 const { expect }               = require('chai')
 
 const assertBody = body =>
-  propSatisfies(softEqual(body), 'body')
+  compose(softEqual(body), prop('body'))
 
 const softEqual = curry((a, b) =>
   expect(a == b).to.be.true

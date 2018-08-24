@@ -5,8 +5,7 @@ test
 
 .DS_Store
 .env
-.jshintrc
-.jshintignore
+.eslintrc.js
 .travis.yml
 *.log
-yarn.lock
+yarn*

@@ -11,8 +11,8 @@ describe('routes', () => {
     '/users/:id': compose(objOf('body'), path(['params', 'id']))
   })
 
-  const server = http.createServer(mount(app)),
-        agent  = request.agent(server)
+  const server = http.createServer(mount({ app }))
+  const agent  = request.agent(server)
 
   it('routes to handler matching the request url', () =>
     agent.get('/users').expect(200, [])

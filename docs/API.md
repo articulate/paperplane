@@ -17,7 +17,7 @@
 ### cors
 
 ```haskell
-cors :: ((Request -> (Response | Promise Response)), Object) -> Request -> Promise Response
+cors :: ((Request -> Promise Response), { k: v }) -> Request -> Promise Response
 ```
 
 Wraps a top-level handler function to add support for [CORS](http://devdocs.io/http/access_control_cors).  Lifts the handler into a `Promise` chain, so the handler can respond with either a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` that resolves with one.  Also accepts an object with the following optional properties to override the default CORS behavior.
@@ -54,7 +54,7 @@ const opts = {
 
 const app = cors(endpoint, opts)
 
-http.createServer(mount(app)).listen(3000)
+http.createServer(mount({ app })).listen(3000)
 ```
 
 ### html
@@ -92,7 +92,7 @@ In the example above, it resolves with a [`Response`](https://github.com/articul
 ### json
 
 ```haskell
-json :: Object -> Response
+json :: a -> Response
 ```
 
 Returns a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), with a `body` encoded with `JSON.stringify`, and the `content-type` header set to `application/json`.
@@ -122,7 +122,7 @@ In the example above, it resolves with a [`Response`](https://github.com/articul
 ### logger
 
 ```haskell
-logger :: Object -> String
+logger :: a -> a
 ```
 
 Logs request/response as `json` to `console.info`.  Uses the following whitelist:
@@ -136,16 +136,21 @@ Logs request/response as `json` to `console.info`.  Uses the following whitelist
 
 If the logged value is an error, it only logs `['message', 'name', 'stack']`.
 
-Provided as an example logger to use with [`mount`](#mount), as below.
+**Note:** This is the default logger used by [`mount`](#mount), but you can also `require` it to modify as needed.  For example, in dev mode you may prefer not to log headers, like this:
 
 ```js
+const { compose, dissocPath } = require('ramda')
 const http = require('http')
-const { logger, mount, send } = require('paperplane')
+const { logger: log, mount, send } = require('paperplane')
 
 const app = () =>
   send() // 200 OK
 
-http.createServer(mount(app, { logger })).listen(3000)
+const isProd = process.env.NODE_ENV === 'production'
+
+const logger = isProd ? log : compose(log, dissocPath(['req', 'headers']))
+
+http.createServer(mount({ app, logger })).listen(3000)
 ```
 
 Logs will be formatted as `json`, similar to below:
@@ -157,7 +162,7 @@ Logs will be formatted as `json`, similar to below:
 ### methods
 
 ```haskell
-methods :: { k: (Request -> (Response | Promise Response)) } -> (Request -> Promise Response)
+methods :: { k: (Request -> Promise Response) } -> (Request -> Promise Response)
 ```
 
 Maps handler functions to request methods.  Returns a handler function.  If the method of an incoming request doesn't match, it rejects with a `404 Not Found`.  Use in combination with [`routes`](#routes) to build a routing table of any complexity.
@@ -177,31 +182,66 @@ const app = methods({
   POST: createUser
 })
 
-http.createServer(mount(app)).listen(3000)
+http.createServer(mount({ app })).listen(3000)
 ```
 
 ### mount
 
 ```haskell
-mount :: ((Request -> (Response | Promise Response)), Object) -> (IncomingMessage, ServerResponse) -> ()
+mount :: { k: v } -> (IncomingMessage, ServerResponse) -> ()
 ```
 
-Wraps a top-level handler function to prepare for mounting as a new `http` server.  Lifts the handler into a `Promise` chain, so the handler can respond with either a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` that resolves with one.  Also accepts an options object with `errLogger` and `logger` properties, both of which can be set to [`logger`](#logger).
+Wraps a top-level handler function to prepare for mounting as a new `http` server.  Lifts the handler into a `Promise` chain, so the handler can respond with either a synchronous [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object), or a `Promise` or other ADT that resolves with one.  Accepts the following options:
 
-**Note:**  The `errLogger` option is primarily intended for logging, not notifying your error aggregation service.  For that you will need to wrap your top-level handler function with [`paperplane-airbrake`](https://github.com/articulate/paperplane-airbrake) or something similar.
+
+| Option | Type | Default | Description |
+| ------ | ---- | ------- | ----------- |
+| `app` | `Request -> m Response` | [`R.identity`](http://devdocs.io/ramda/index#identity) | top-level request handler function |
+| `cry` | `Error -> a` | [`paperplane.logger`](#logger) | error logger |
+| `logger` | `a -> a` | [`paperplane.logger`](#logger) | request/response logger |
+| `middleware` | `[ ReduxMiddleware ]` | `[]` | list of Redux middleware for unwrapping ADT's |
+
+The `cry` option is primarily intended for logging, but is also the correct way to notify your error aggregation service.  All errors passed to the `cry` function will have a `req` property that can be used to include request information in your notification.  For notifying [Airbrake](https://airbrake.io/), use the latest version of [`paperplane-airbrake`](https://github.com/articulate/paperplane-airbrake) for this option.
+
+To support request handlers that return ADT's (such as those provided by the lovely [`crocks`](https://github.com/evilsoft/crocks) library), register a list of appropriate Redux middleware using the `middleware` option.  No, `paperplane` does not use Redux, but Redux middleware make for great little plugins to recursively unwrap ADT's.  You won't need [`redux-promise`](https://github.com/redux-utilities/redux-promise), because `Promise` support is already included, but some common middlewares that may interest you are:
+
+- [`redux-future2`](https://github.com/articulate/redux-future2)
+- [`redux-io`](https://github.com/stoeffel/redux-io)
+- [`redux-functor`](https://github.com/articulate/redux-functor)
 
 See also [`methods`](#methods), [`routes`](#routes).
 
 ```js
+const { Async, IO } = require('crocks')
+const { compose, pipe, pipeP } = require('ramda')
+const future = require('redux-future2')
 const http = require('http')
-const { logger, mount, send } = require('paperplane')
+const io = require('redux-io').default
+const { mount, parseJson, routes } = require('paperplane')
 
-const app = req =>
-  Promise.resolve(req.body).then(send)
+const airbrake = require('./lib/airbrake')
+const logger   = require('./lib/logger')
 
-const opts = { errLogger: logger, logger }
+const endpoints = routes({
+  '/async':     Async.of,
+  '/io':        IO.of,
+  '/promise':   Promise.resolve,
+  '/inception': compose(Async.of, IO.of)
+})
 
-http.createServer(mount(app, opts)).listen(3000)
+const app = pipe(
+  parseJson,
+  pipeP(
+    endpoints,
+    json
+  )
+)
+
+const cry = require('paperplane-airbrake')(airbrake)
+
+const middleware = [ future, io('run') ]
+
+http.createServer(mount({ app, cry, logger, middleware })).listen(3000, cry)
 ```
 
 ### parseJson
@@ -224,7 +264,7 @@ const echo = req =>
 
 const app = compose(echo, parseJson)
 
-http.createServer(mount(app)).listen(3000)
+http.createServer(mount({ app })).listen(3000)
 ```
 
 ### redirect
@@ -265,7 +305,7 @@ const app = routes({
   })
 })
 
-http.createServer(mount(app)).listen(3000)
+http.createServer(mount({ app })).listen(3000)
 ```
 
 In the example above, `redirect()` returns a [`Response`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object) similar to:
@@ -283,7 +323,7 @@ In the example above, `redirect()` returns a [`Response`](https://github.com/art
 ### routes
 
 ```haskell
-routes :: { k: (Request -> (Response | Promise Response)) } -> (Request -> Response)
+routes :: { k: (Request -> Promise Response) } -> (Request -> Response)
 ```
 
 Maps handler functions to express-style route patterns.  Returns a handler function.  If the path of an incoming request doesn't match, it rejects with a `404 Not Found`.  Use in combination with [`methods`](#methods) to build a routing table of any complexity.
@@ -307,7 +347,7 @@ const app = routes({
   })
 })
 
-http.createServer(mount(app)).listen(3000)
+http.createServer(mount({ app })).listen(3000)
 ```
 
 ### send
@@ -339,7 +379,7 @@ In the example above, it returns a [`Response`](https://github.com/articulate/pa
 ### serve
 
 ```haskell
-serve :: Object -> (Request -> Response)
+serve :: { k: v } -> (Request -> Response)
 ```
 
 Accepts an options object (see [details here](https://www.npmjs.com/package/send#options)), and returns a handler function for serving static files.  Expects a `req.params.path` to be present on the [`Request`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#request-object), so you'll need to format your route pattern similar to the example below, making sure to include a `/:path+` route segment.
@@ -356,5 +396,5 @@ const app = routes({
   '/public/:path+': serve({ root: 'public' })
 })
 
-http.createServer(mount(app)).listen(3000)
+http.createServer(mount({ app })).listen(3000)
 ```

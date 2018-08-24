@@ -11,8 +11,8 @@ describe('methods', function() {
     PUT: K({ body: 'PUT' })
   })
 
-  const server = http.createServer(mount(app)),
-        agent  = request.agent(server)
+  const server = http.createServer(mount({ app }))
+  const agent  = request.agent(server)
 
   it('routes to the handler matching the request method', () =>
     agent.get('/').expect(200).then(assertBody('GET'))

@@ -11,8 +11,8 @@ describe('serve', () => {
     '/pub/:path+': serve({ root: 'test/fixtures' })
   })
 
-  const server = http.createServer(mount(app)),
-        agent  = request.agent(server)
+  const server = http.createServer(mount({ app }))
+  const agent  = request.agent(server)
 
   it('responds with found static files', () =>
     agent.get('/pub/static-file.txt').expect(200, 'testing testing' + EOL)
