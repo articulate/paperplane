@@ -21,7 +21,8 @@ The main goal of `paperplane` is to make building a `node.js` server easy, witho
 With `paperplane` you get all of these out-of-the-box:
 
 - pure, functional, Promise-based [request handlers](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#basic-concepts)
-- support for request handlers that return [Algebraic Data Types](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#what-are-algebraic-data-types) - **new in v2!**
+- support for request handlers that return [Algebraic Data Types](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#what-are-algebraic-data-types) - **new in v2.0**
+- support for highly scalable [serverless deployment](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment) - **new in v2.1**
 - composeable json [body parsing](https://github.com/articulate/paperplane/blob/master/docs/API.md#parsejson)
 - dead-simple [routing functions](https://github.com/articulate/paperplane/blob/master/docs/API.md#routes)
 - several common [response helpers](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#response-object)
@@ -41,7 +42,7 @@ const hello = req => ({
 })
 
 const app = routes({
-  `/hello/:name`: methods({
+  '/hello/:name': methods({
     GET: compose(json, hello)
   })
 })
