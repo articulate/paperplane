@@ -7,6 +7,7 @@ const Boom         = require('boom')
 const future       = require('redux-future').default
 const http         = require('http')
 const Joi          = require('joi')
+const property     = require('prop-factory')
 const request      = require('supertest')
 const spy          = require('@articulate/spy')
 const str          = require('string-to-stream')
@@ -212,5 +213,26 @@ describe('mount', () => {
     it('supports handlers that return ADTs', () =>
       agent.get('/async').expect(200).then(assertBody('async'))
     )
+  })
+
+  describe('when lambda: true', () => {
+    const event = {
+      headers: { 'X-Forwarded-Proto': 'https' },
+      httpMethod: 'GET',
+      path: '/json'
+    }
+
+    const handler = mount({ app, lambda: true })
+    const res     = property()
+
+    beforeEach(() =>
+      handler(event).then(res)
+    )
+
+    it('supports Lambda proxy integration', () => {
+      expect(res().body).to.equal('{}')
+      expect(res().headers).to.eql({ 'content-type': 'application/json' })
+      expect(res().statusCode).to.equal(200)
+    })
   })
 })
