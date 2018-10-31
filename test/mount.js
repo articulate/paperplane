@@ -231,8 +231,12 @@ describe('mount', () => {
 
     it('supports Lambda proxy integration', () => {
       expect(res().body).to.equal('{}')
-      expect(res().headers).to.eql({ 'content-type': 'application/json' })
       expect(res().statusCode).to.equal(200)
+      expect(res().headers).to.eql({
+        'content-length': 2,
+        'content-type': 'application/json',
+        'etag': '"2-mZFLkyvTelC5g8XnyQrpOw"'
+      })
     })
   })
 })
