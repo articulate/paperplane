@@ -2946,11 +2946,6 @@ promise@^7.0.1:
   dependencies:
     asap "~2.0.3"
 
-prop-factory@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/prop-factory/-/prop-factory-1.0.0.tgz#1a1f953b10be675b5524f2273e38dfba18151ae6"
-  integrity sha1-Gh+VOxC+Z1tVJPInPjjfuhgVGuY=
-
 prr@~0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/prr/-/prr-0.0.0.tgz#1a84b85908325501411853d0081ee3fa86e2926a"

@@ -50,7 +50,6 @@
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
     "nyc": "^13.1.0",
-    "prop-factory": "^1.0.0",
     "pug": "^2.0.0-beta6",
     "redux-future": "^0.0.11",
     "string-to-stream": "^1.1.0",
