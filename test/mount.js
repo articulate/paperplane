@@ -11,13 +11,16 @@ const request      = require('supertest')
 const spy          = require('@articulate/spy')
 const str          = require('string-to-stream')
 
-const assertBody              = require('./lib/assertBody')
+const assertBody  = require('./lib/assertBody')
+const errorStream = require('./lib/errorStream')
+
 const { json, mount, routes } = require('..')
 
 describe('mount', () => {
   const app = routes({
     '/body':     pick(['body']),
     '/boom':     () => { throw Boom.notFound() },
+    '/broke':    () => ({ body: errorStream() }),
     '/buffer':   K({ body: Buffer.from([0x62,0x75,0x66,0x66,0x65,0x72]) }),
     '/cookie':   compose(json, prop('cookies')),
     '/error':    () => { throw new Error('error') },
@@ -126,6 +129,12 @@ describe('mount', () => {
 
       it('accepts undefined to denote a no-content body', () =>
         agent.get('/none').expect(200, '')
+      )
+
+      it('drops body if method is HEAD', () =>
+        agent.head('/buffer')
+          .expect(200, undefined)
+          .expect('content-length', '6')
       )
     })
 
@@ -352,13 +361,12 @@ describe('mount', () => {
         handler({
           httpMethod: 'GET',
           path: '/buffer'
-        }).then(res =>
-          expect(res).to.include({
-            body: 'YnVmZmVy',
-            isBase64Encoded: true,
-            statusCode: 200
-          })
-        )
+        }).then(res => {
+          expect(res.body).to.equal('YnVmZmVy')
+          expect(res.headers['content-length']).to.equal(6)
+          expect(res.isBase64Encoded).to.be.true
+          expect(res.statusCode).to.equal(200)
+        })
       )
 
       it('accepts a string', () =>
@@ -375,7 +383,6 @@ describe('mount', () => {
       )
 
       it('accepts a stream', () =>
-        // agent.get('/stream').expect(200, 'stream')
         handler({
           httpMethod: 'GET',
           path: '/stream'
@@ -388,119 +395,195 @@ describe('mount', () => {
         )
       )
 
-    //   it('accepts undefined to denote a no-content body', () =>
-    //     agent.get('/none').expect(200, '')
-    //   )
+      it('accepts undefined to denote a no-content body', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/none'
+        }).then(res => {
+          expect(res.body).to.be.undefined
+          expect(res.statusCode).to.equal(200)
+        })
+      )
+
+      it('drops body if method is HEAD', () =>
+        handler({
+          httpMethod: 'HEAD',
+          path: '/buffer'
+        }).then(res => {
+          expect(res.body).to.be.undefined
+          expect(res.headers['content-length']).to.equal(6)
+          expect(res.isBase64Encoded).to.be.false
+          expect(res.statusCode).to.equal(200)
+        })
+      )
     })
 
-    // describe('response headers', () => {
-    //   it('accepts an object of headers', () =>
-    //     agent.get('/json').expect('content-type', 'application/json')
-    //   )
+    describe('response headers', () => {
+      it('accepts an object of headers', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/json'
+        }).then(res =>
+          expect(res.headers).to.include({
+            'content-type': 'application/json'
+          })
+        )
+      )
 
-    //   it('defaults the content-type to "application/octet-stream"', () =>
-    //     agent.get('/string').expect('content-type', 'application/octet-stream')
-    //   )
+      it('defaults the content-type to "application/octet-stream"', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/string'
+        }).then(res =>
+          expect(res.headers).to.include({
+            'content-type': 'application/octet-stream'
+          })
+        )
+      )
 
-    //   it('sets the content-length header for buffers', () =>
-    //     agent.get('/buffer').expect('content-length', '6')
-    //   )
+      it('sets the content-length header for buffers', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/buffer'
+        }).then(res =>
+          expect(res.headers).to.include({
+            'content-length': 6
+          })
+        )
+      )
 
-    //   it('sets the content-length header for strings', () =>
-    //     agent.get('/string').expect('content-length', '6')
-    //   )
+      it('sets the content-length header for strings', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/string'
+        }).then(res =>
+          expect(res.headers).to.include({
+            'content-length': 6
+          })
+        )
+      )
 
-    //   it('sets the etag header for buffers', () =>
-    //     agent.get('/buffer').expect('etag', '"6-fy20I6SbMFRZFHMy+wHPhw"')
-    //   )
+      it('sets the etag header for buffers', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/buffer'
+        }).then(res =>
+          expect(res.headers).to.include({
+            'etag': '"6-fy20I6SbMFRZFHMy+wHPhw"'
+          })
+        )
+      )
 
-    //   it('sets the etag header for strings', () =>
-    //     agent.get('/string').expect('etag', '"6-tFz/4ITdPSDZKL7oXnsPIQ"')
-    //   )
-    // })
+      it('sets the etag header for strings', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/string'
+        }).then(res =>
+          expect(res.headers).to.include({
+            'etag': '"6-tFz/4ITdPSDZKL7oXnsPIQ"'
+          })
+        )
+      )
+    })
 
-    // describe('errors', () => {
-    //   it('defaults statusCode to 500', () =>
-    //     agent.get('/error').expect(500)
-    //   )
+    describe('errors', () => {
+      it('defaults statusCode to 500', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/error'
+        }).then(res =>
+          expect(res.statusCode).to.equal(500)
+        )
+      )
 
-    //   it('catches and formats boom errors', () =>
-    //     agent.get('/boom').expect(404)
-    //   )
+      it('catches and formats boom errors', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/boom'
+        }).then(res =>
+          expect(res.statusCode).to.equal(404)
+        )
+      )
 
-    //   it('catches and formats http-errors', () =>
-    //     agent.get('/http').expect(404)
-    //   )
+      it('catches and formats http-errors', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/http'
+        }).then(res =>
+          expect(res.statusCode).to.equal(404)
+        )
+      )
 
-    //   it('catches and formats joi errors', () =>
-    //     agent.get('/joi').expect(400)
-    //   )
-    // })
+      it('catches and formats joi errors', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/joi'
+        }).then(res =>
+          expect(res.statusCode).to.equal(400)
+        )
+      )
+    })
 
-    // describe('logging', () => {
-    //   it('logs errors to supplied cry function', function(done) {
-    //     agent.get('/error').end((err, res) => {
-    //       expect(cry.calls.length).to.equal(1)
-    //       expect(cry.calls[0][0].req).to.exist
-    //       expect(res.statusCode).to.equal(500)
-    //       done()
-    //     })
-    //   })
+    describe('logging', () => {
+      it('logs errors to supplied cry function', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/error'
+        }).then(res => {
+          expect(cry.calls.length).to.equal(1)
+          expect(cry.calls[0][0].req).to.exist
+          expect(res.statusCode).to.equal(500)
+        })
+      )
 
-    //   it('logs requests and responses', function(done) {
-    //     agent.get('/string').end(() => {
-    //       expect(logger.calls.length).to.equal(1)
-    //       expect(logger.calls[0][0].req).to.exist
-    //       expect(logger.calls[0][0].res).to.exist
-    //       done()
-    //     })
-    //   })
-    // })
+      it('logs requests and responses', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/string'
+        }).then(() => {
+          expect(logger.calls.length).to.equal(1)
+          expect(logger.calls[0][0].req).to.exist
+          expect(logger.calls[0][0].res).to.exist
+        })
+      )
+    })
 
-    // describe('when called with no options', () => {
-    //   const server = http.createServer(mount())
-    //   const agent  = request.agent(server)
+    describe('when called with no other options', () => {
+      const handler = mount({ lambda: true })
 
-    //   it('acts as an echo server', () =>
-    //     agent.post('/').send({ a: 'b' }).expect(200, { a: 'b' })
-    //   )
-    // })
+      it('acts as an echo server', () =>
+        handler({
+          httpMethod: 'POST',
+          path: '/',
+          body: 'body'
+        }).then(res =>
+          expect(res).to.include({
+            body: 'body',
+            statusCode: 200
+          })
+        )
+      )
+    })
 
-    // describe('when supplied with redux middleware', () => {
-    //   const app = routes({
-    //     '/async': () => Async.of({ body: 'async' })
-    //   })
+    describe('when supplied with redux middleware', () => {
+      const app = routes({
+        '/async': () => Async.of({ body: 'async' })
+      })
 
-    //   const middleware = [ future ]
-    //   const server     = http.createServer(mount({ app, middleware }))
-    //   const agent      = request.agent(server)
+      const middleware = [ future ]
+      const handler    = mount({ app, lambda: true, middleware })
 
-    //   it('supports handlers that return ADTs', () =>
-    //     agent.get('/async').expect(200).then(assertBody('async'))
-    //   )
-    // })
-
-  //   const event = {
-  //     headers: { 'X-Forwarded-Proto': 'https' },
-  //     httpMethod: 'GET',
-  //     path: '/json'
-  //   }
-
-  //   const handler = mount({ app, lambda: true })
-  //   const res     = property()
-
-  //   beforeEach(() =>
-  //     handler(event).then(res)
-  //   )
-
-  //   it('supports Lambda proxy integration', () => {
-  //     expect(res().body).to.equal('{}')
-  //     expect(res().statusCode).to.equal(200)
-  //     expect(res().headers).to.eql({
-  //       'content-length': 2,
-  //       'content-type': 'application/json',
-  //       'etag': '"2-mZFLkyvTelC5g8XnyQrpOw"'
-  //     })
-  //   })
+      it('supports handlers that return ADTs', () =>
+        handler({
+          httpMethod: 'GET',
+          path: '/async'
+        }).then(res =>
+          expect(res).to.include({
+            body: 'async',
+            statusCode: 200
+          })
+        )
+      )
+    })
   })
 })
