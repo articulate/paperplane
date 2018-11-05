@@ -110,6 +110,7 @@ The `Request` object is the sole input to your handler function, and has the fol
 | Property | Type | Details |
 | -------- | ---- | ------- |
 | `body` | `String` | request body, with default charset of `utf8` |
+| `context` | `Object` | [`requestContext`](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format) from a Lambda proxy event, only present if `{ lambda: true }` enabled |
 | `cookies` | `Object` | map of cookies, parsed from the `cookie` header |
 | `headers` | `Object` | map of headers, with downcased header names as keys |
 | `method` | `String` | request method, should be uppercase |

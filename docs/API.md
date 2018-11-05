@@ -198,6 +198,7 @@ Wraps a top-level handler function to prepare for mounting as a new `http` serve
 | ------ | ---- | ------- | ----------- |
 | `app` | `Request -> m Response` | [`R.identity`](http://devdocs.io/ramda/index#identity) | top-level request handler function |
 | `cry` | `Error -> a` | [`paperplane.logger`](#logger) | error logger |
+| `lambda` | `Boolean` | `false` | enables support for [serverless deployment](#serverless-deployment) |
 | `logger` | `a -> a` | [`paperplane.logger`](#logger) | request/response logger |
 | `middleware` | `[ ReduxMiddleware ]` | `[]` | list of Redux middleware for unwrapping ADT's |
 
@@ -222,7 +223,7 @@ const { compose, pipe, pipeP } = require('ramda')
 const future = require('redux-future2')
 const http = require('http')
 const io = require('redux-io').default
-const { mount, parseJson, routes } = require('paperplane')
+const { json, mount, parseJson, routes } = require('paperplane')
 
 const airbrake = require('./lib/airbrake')
 const logger   = require('./lib/logger')
@@ -247,6 +248,29 @@ const cry = require('paperplane-airbrake')(airbrake)
 const middleware = [ future, io('run') ]
 
 http.createServer(mount({ app, cry, logger, middleware })).listen(3000, cry)
+```
+
+#### Serverless deployment
+
+If `{ lambda: true }` is enabled, the [`mount`](#mount) function returns a Lambda handler suitable for use as the backend of an [API Gateway Lambda proxy integration](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html).  A special `context` property will be added to the [`Request`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#request-object) to provide access to the [`requestContext`](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format) from the Lambda proxy event, which provides access to identity information supplied by [Lambda authorizers or Cognito user pools](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-control-access-to-api.html).  Otherwise, building your app with `paperplane` is business as usual, just with the scaling power of a serverless deployment.
+
+```js
+const { always } = require('ramda')
+const { json, methods, mount, routes } = require('paperplane')
+
+const courses = require('./data/courses')
+
+const app = routes({
+  '/api/courses': methods({
+    GET:  courses.list,
+    POST: courses.create,
+    PUT:  courses.update
+  }),
+
+  '/health': always(send()) // 200 OK
+})
+
+exports.handler = mount({ app, lambda: true })
 ```
 
 ### parseJson

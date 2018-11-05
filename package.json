@@ -25,17 +25,17 @@
     "test:coverage": "nyc yarn run test"
   },
   "dependencies": {
-    "@articulate/funky": "^1.3.0",
+    "@articulate/funky": "^1.4.1",
     "boom": "^5.1.0",
     "cookie": "^0.3.1",
     "etag": "^1.7.0",
+    "fast-stream-to-buffer": "^1.0.0",
     "media-typer": "^0.3.0",
     "path-match": "^1.2.4",
     "qs": "^6.3.0",
     "ramda": "^0.25.0",
     "raw-body": "^2.2.0",
-    "send": "^0.16.0",
-    "type-is": "^1.6.14"
+    "send": "^0.16.0"
   },
   "devDependencies": {
     "@articulate/spy": "^0.0.1",
@@ -49,7 +49,7 @@
     "memdown": "^1.2.4",
     "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
-    "nyc": "^12.0.2",
+    "nyc": "^13.1.0",
     "pug": "^2.0.0-beta6",
     "redux-future": "^0.0.11",
     "string-to-stream": "^1.1.0",
