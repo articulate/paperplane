@@ -1,5 +1,6 @@
-const { always: K, compose, pick, prop } = require('ramda')
+const { always: K, compose, inc, join, pick, prop } = require('ramda')
 const { Async }    = require('crocks')
+const _            = require('highland')
 const { expect }   = require('chai')
 const { NotFound } = require('http-errors')
 const { validate } = require('@articulate/funky')
@@ -14,7 +15,7 @@ const str          = require('string-to-stream')
 const assertBody  = require('./lib/assertBody')
 const errorStream = require('./lib/errorStream')
 
-const { json, mount, routes } = require('..')
+const { json, mount, routes, send } = require('..')
 
 describe('mount', () => {
   const app = routes({
@@ -31,7 +32,14 @@ describe('mount', () => {
     '/none':     K({ body: undefined }),
     '/stream':   () => ({ body: str('stream') }),
     '/string':   K({ body: 'string' }),
-    '/url':      compose(json, pick(['pathname', 'query']))
+    '/url':      compose(json, pick(['pathname', 'query'])),
+    '/response': ({ request: r }) => {
+      r
+        .on('data', console.log.bind(console, 'DATA'))
+        .on('end', console.log.bind(console, 'END'))
+      return {}
+    }
+      // _(r).collect().map(join('')).toPromise(Promise)
   })
 
   const cry    = spy()
@@ -70,6 +78,10 @@ describe('mount', () => {
             done()
           })
       })
+
+      it('streams from request', () =>
+        agent.post('/response').send('47').set('Content-Length', 0).expect(200, 48)
+      )
     })
 
     describe('request headers', () => {
