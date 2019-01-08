@@ -118,6 +118,7 @@ The `Request` object is the sole input to your handler function, and has the fol
 | `pathname` | `String` | just the path portion of the request url |
 | `protocol` | `String` | `https` if connection is encrypted, otherwise `http` |
 | `query` | `Object` | map of query string parameters |
+| `request` | [`IncomingMessage`](https://nodejs.org/api/http.html#http_class_http_incomingmessage) | Raw request object passed to the server's response listener. Useful for streaming the request. |
 | `url` | `String` | the full [request url](http://devdocs.io/node/http#http_message_url) |
 
 ### `Response` object
