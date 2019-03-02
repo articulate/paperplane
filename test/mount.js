@@ -173,7 +173,7 @@ describe('mount', () => {
         agent.get('/boom')
           .expect(401)
           .expect('www-authenticate', /Basic/)
-          .expect('www-authenticate',  /realm="protected area"/)
+          .expect('www-authenticate', /realm="protected area"/)
           .expect('www-authenticate', /error="error message"/)
       )
 
