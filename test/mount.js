@@ -19,7 +19,7 @@ const { json, mount, routes } = require('..')
 describe('mount', () => {
   const app = routes({
     '/body':     pick(['body']),
-    '/boom':     () => { throw Boom.notFound() },
+    '/boom':     () => { throw Boom.unauthorized('error message', 'Basic', { realm: 'protected area'}) },
     '/broke':    () => ({ body: errorStream() }),
     '/buffer':   K({ body: Buffer.from([0x62,0x75,0x66,0x66,0x65,0x72]) }),
     '/cookie':   compose(json, prop('cookies')),
@@ -170,7 +170,11 @@ describe('mount', () => {
       )
 
       it('catches and formats boom errors', () =>
-        agent.get('/boom').expect(404)
+        agent.get('/boom')
+          .expect(401)
+          .expect('www-authenticate', /Basic/)
+          .expect('www-authenticate', /realm="protected area"/)
+          .expect('www-authenticate', /error="error message"/)
       )
 
       it('catches and formats http-errors', () =>
@@ -500,9 +504,12 @@ describe('mount', () => {
         handler({
           httpMethod: 'GET',
           path: '/boom'
-        }).then(res =>
-          expect(res.statusCode).to.equal(404)
-        )
+        }).then(res => {
+          expect(res.statusCode).to.equal(401)
+          expect(res.headers['WWW-Authenticate']).to.include('Basic')
+          expect(res.headers['WWW-Authenticate']).to.include('error="error message"')
+          expect(res.headers['WWW-Authenticate']).to.include('realm="protected area"')
+        })
       )
 
       it('catches and formats http-errors', () =>
