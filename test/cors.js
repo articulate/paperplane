@@ -1,5 +1,5 @@
 const { always: K } = require('ramda')
-const Boom    = require('boom')
+const Boom    = require('@hapi/boom')
 const http    = require('http')
 const request = require('supertest')
 
