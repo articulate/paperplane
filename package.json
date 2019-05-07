@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@articulate/funky": "^1.4.1",
-    "boom": "^7.3.0",
+    "@hapi/boom": "^7.4.2",
     "cookie": "^0.3.1",
     "etag": "^1.7.0",
     "fast-stream-to-buffer": "^1.0.0",
