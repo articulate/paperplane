@@ -110,14 +110,16 @@ The `Request` object is the sole input to your handler function, and has the fol
 | Property | Type | Details |
 | -------- | ---- | ------- |
 | `body` | `String` | request body, with default charset of `utf8` |
-| `context` | `Object` | [`requestContext`](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format) from a Lambda proxy event, only present if `{ lambda: true }` enabled |
+| `context` | `Object` | [`requestContext`](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format) from a Lambda proxy event, only present in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment) |
 | `cookies` | `Object` | map of cookies, parsed from the `cookie` header |
 | `headers` | `Object` | map of headers, with downcased header names as keys |
 | `method` | `String` | request method, should be uppercase |
+| `original` | [`IncomingMessage`](https://devdocs.io/node/http#http_class_http_incomingmessage) | reference to the original request object, not present in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment) |
 | `params` | `Object` | map of named route parameters, only present if [`routes`](https://github.com/articulate/paperplane/blob/master/docs/API.md#routes) function used |
 | `pathname` | `String` | just the path portion of the request url |
 | `protocol` | `String` | `https` if connection is encrypted, otherwise `http` |
 | `query` | `Object` | map of query string parameters |
+| `route` | `String` | matched route pattern, only present if [`routes`](https://github.com/articulate/paperplane/blob/master/docs/API.md#routes) function used |
 | `url` | `String` | the full [request url](http://devdocs.io/node/http#http_message_url) |
 
 ### `Response` object

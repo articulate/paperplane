@@ -27,6 +27,7 @@ describe('mount', () => {
     '/http':     () => { throw new NotFound() },
     '/joi':      () => validate(Joi.string(), 123),
     '/json':     K(json({})),
+    '/original': req => json({ hasOriginal: req.original instanceof http.IncomingMessage }),
     '/protocol': compose(json, pick(['protocol'])),
     '/none':     K({ body: undefined }),
     '/stream':   () => ({ body: str('stream') }),
@@ -70,6 +71,11 @@ describe('mount', () => {
             done()
           })
       })
+
+      it('includes a reference to original request object', () =>
+        agent.get('/original')
+          .expect(200, { hasOriginal: true })
+      )
     })
 
     describe('request headers', () => {
