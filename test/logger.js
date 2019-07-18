@@ -61,9 +61,11 @@ describe('logger', () => {
     )
   })
 
-  describe('when used as the errLogger', () => {
+  describe('when used as the cry', () => {
     beforeEach(() => {
-      logger(new Error('message'))
+      const err = new Error('message')
+      err.extraData = { foo: 'bar' }
+      logger(err)
       output = JSON.parse(console.info.calls[0][0])
     })
 
@@ -77,6 +79,10 @@ describe('logger', () => {
 
     it('includes the error stack', () =>
       expect(output.stack).to.exist
+    )
+
+    it('includes any extra data attached to the error', () =>
+      expect(output.extraData).to.eql({ foo: 'bar' })
     )
   })
 })
