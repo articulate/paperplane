@@ -1,8 +1,8 @@
+const { assemble, rename } = require('@articulate/funky')
 const { expect } = require('chai')
 const http = require('http')
-const { composeP, is, objOf, pipe, prop, tap } = require('ramda')
+const { composeP, is, pipe, prop, tap } = require('ramda')
 const { Readable } = require('stream')
-const { rename } = require('@articulate/funky')
 const request = require('supertest')
 
 const { json, mount, parseJson, routes } = require('..')
@@ -18,8 +18,10 @@ describe('parseJson', () => {
 
       '/plain': pipe(
         prop('body'),
-        is(Readable),
-        objOf('isReadable'),
+        assemble({
+          isReadable: is(Readable),
+          isString: is(String)
+        }),
         json
       )
     })
@@ -54,7 +56,10 @@ describe('parseJson', () => {
       agent.post('/plain')
         .type('text/plain')
         .send('just plain text')
-        .expect(200, { isReadable: true })
+        .expect(200, {
+          isReadable: true,
+          isString: false
+        })
     )
   })
 
@@ -103,7 +108,7 @@ describe('parseJson', () => {
         body
       }).then(res =>
         expect(res).to.include({
-          body: '{"isReadable":false}',
+          body: '{"isReadable":false,"isString":true}',
           statusCode: 200
         })
       )
