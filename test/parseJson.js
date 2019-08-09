@@ -1,7 +1,7 @@
 const { assemble, rename } = require('@articulate/funky')
+const { composeP, is, pipe, prop, tap } = require('ramda')
 const { expect } = require('chai')
 const http = require('http')
-const { composeP, is, pipe, prop, tap } = require('ramda')
 const { Readable } = require('stream')
 const request = require('supertest')
 

@@ -21,7 +21,7 @@
 bufferBody :: Request -> Promise Request
 ```
 
-Buffers the request body into a `String` to mimic `v2.x` behavior.  Only needed if you previously relied on that behavior.
+Buffers the request body into a `String` to mimic `v2` behavior.  Only needed if you previously relied on that behavior.
 
 Not required if using [`parseJson`](#parsejson) to parse requests.  Also not required in [serverless mode](#serverless-deployment), since the request body is already [buffered into a `String` by AWS](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format).
 
