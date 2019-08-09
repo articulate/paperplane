@@ -1,39 +1,57 @@
-const { expect }  = require('chai')
+const http = require('http')
+const { composeP, is, objOf, pipe, prop, tap } = require('ramda')
+const { Readable } = require('stream')
+const { rename } = require('@articulate/funky')
+const request = require('supertest')
 
-const { parseJson } = require('..')
-
-const request = contentType => ({
-  body: '{"foo":"bar"}',
-  headers: {
-    'content-length': 13,
-    'content-type': contentType
-  }
-})
+const { json, mount, parseJson, routes } = require('..')
 
 describe('parseJson', () => {
-  describe('when content-type is "application/json"', () => {
-    const req = parseJson(request('application/json'))
+  const endpoints =
+    routes({
+      '/json': pipe(
+        prop('body'),
+        rename('name', 'pkgName'),
+        json
+      ),
 
-    it('parses the request body as json', () => {
-      expect(req.body).to.be.an('object')
-      expect(req.body.foo).to.equal('bar')
+      '/plain': pipe(
+        prop('body'),
+        is(Readable),
+        objOf('isReadable'),
+        json
+      )
     })
-  })
 
-  describe('when json content-type includes a charset', () => {
-    const req = parseJson(request('application/json; charset=utf-8'))
+  const app =
+    composeP(endpoints, parseJson)
 
-    it('parses the request body as json', () => {
-      expect(req.body).to.be.an('object')
-      expect(req.body.foo).to.equal('bar')
-    })
-  })
+  const cry =
+    tap(console.error)
 
-  describe('when content-type is not json', () => {
-    const req = parseJson(request('text/plain'))
+  const server = http.createServer(mount({ app, cry }))
+  const agent = request.agent(server)
 
-    it('does not parse the request body as json', () =>
-      expect(req.body).to.be.a('string')
-    )
-  })
+  const body = '{"name":"paperplane"}'
+
+  it('parses when content-type is "application/json"', () =>
+    agent.post('/json')
+      .type('application/json')
+      .send(body)
+      .expect(200, { pkgName: 'paperplane' })
+  )
+
+  it('parses when json content-type includes a charset', () =>
+    agent.post('/json')
+      .type('application/json; charset=utf-8')
+      .send(body)
+      .expect(200, { pkgName: 'paperplane' })
+  )
+
+  it('does not parse when content-type is not json', () =>
+    agent.post('/plain')
+      .type('text/plain')
+      .send('just plain text')
+      .expect(200, { isReadable: true })
+  )
 })

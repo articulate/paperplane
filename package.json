@@ -25,7 +25,7 @@
     "test:coverage": "nyc yarn run test"
   },
   "dependencies": {
-    "@articulate/funky": "^1.4.1",
+    "@articulate/funky": "^1.7.0",
     "@hapi/boom": "^7.4.2",
     "cookie": "^0.3.1",
     "etag": "^1.7.0",
