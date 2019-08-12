@@ -2,6 +2,7 @@ const { always: K, compose, pick, prop } = require('ramda')
 const { Async }    = require('crocks')
 const { expect }   = require('chai')
 const { NotFound } = require('http-errors')
+const { Readable } = require('stream')
 const { validate } = require('@articulate/funky')
 const Boom         = require('@hapi/boom')
 const future       = require('redux-future').default
@@ -18,7 +19,7 @@ const { json, mount, routes } = require('..')
 
 describe('mount', () => {
   const app = routes({
-    '/body':     pick(['body']),
+    '/body':     req => json({ isReadable: req.body instanceof Readable }),
     '/boom':     () => { throw Boom.unauthorized('error message', 'Basic', { realm: 'protected area'}) },
     '/broke':    () => ({ body: errorStream() }),
     '/buffer':   K({ body: Buffer.from([0x62,0x75,0x66,0x66,0x65,0x72]) }),
@@ -48,8 +49,10 @@ describe('mount', () => {
     const agent  = request.agent(server)
 
     describe('request', () => {
-      it('reads the whole body', () =>
-        agent.post('/body').send('body').expect(200).then(assertBody('body'))
+      it('streams the body', () =>
+        agent.post('/body')
+          .send('body')
+          .expect(200, { isReadable: true })
       )
 
       it('parses the pathname and query', () =>
@@ -240,14 +243,14 @@ describe('mount', () => {
     const handler = mount({ app, cry, lambda: true, logger })
 
     describe('request', () => {
-      it('reads the whole body', () =>
+      it('buffers the body', () =>
         handler({
           httpMethod: 'POST',
           path: '/body',
           body: 'body'
         }).then(res =>
           expect(res).to.include({
-            body: 'body',
+            body: '{"isReadable":false}',
             statusCode: 200
           })
         )

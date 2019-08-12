@@ -109,7 +109,7 @@ The `Request` object is the sole input to your handler function, and has the fol
 
 | Property | Type | Details |
 | -------- | ---- | ------- |
-| `body` | `String` | request body, with default charset of `utf8` |
+| `body` | [`Readable`](https://devdocs.io/node/stream#stream_class_stream_readable)&vert;`String` | request body, a [`Readable`](https://devdocs.io/node/stream#stream_class_stream_readable) stream by default, or a `String` in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment) |
 | `context` | `Object` | [`requestContext`](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format) from a Lambda proxy event, only present in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment) |
 | `cookies` | `Object` | map of cookies, parsed from the `cookie` header |
 | `headers` | `Object` | map of headers, with downcased header names as keys |

@@ -2,6 +2,7 @@
 
 | Function | Description |
 | -------- | ----------- |
+| [`bufferBody`](#bufferbody) | body buffering helper |
 | [`cors`](#cors) | CORS support wrapper |
 | [`html`](#html) | response helper, type `text/html` |
 | [`json`](#json) | response helper, type `application/json` |
@@ -13,6 +14,32 @@
 | [`routes`](#routes) | maps express-style route patterns to handler functions |
 | [`send`](#send) | basic response helper |
 | [`serve`](#serve) | static file serving handler |
+
+### bufferBody
+
+```haskell
+bufferBody :: Request -> Promise Request
+```
+
+Buffers the request body into a `String` to mimic `v2` behavior.  Only needed if you previously relied on that behavior.
+
+Not required if using [`parseJson`](#parsejson) to parse requests.  Also not required in [serverless mode](#serverless-deployment), since the request body is already [buffered into a `String` by AWS](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format).
+
+See also [`parseJson`](#parsejson).
+
+```js
+const { bufferBody, json, mount } = require('paperplane')
+const { composeP } = require('ramda')
+const http = require('http')
+
+const endpoint = req =>
+  json({ isString: typeof req.body === 'string' })
+
+const app =
+  composeP(endpoint, bufferBody)
+
+http.createServer(mount({ app })).listen(3000)
+```
 
 ### cors
 
@@ -219,7 +246,7 @@ See also [`methods`](#methods), [`routes`](#routes).
 
 ```js
 const { Async, IO } = require('crocks')
-const { compose, pipe, pipeP } = require('ramda')
+const { compose, composeP } = require('ramda')
 const future = require('redux-future2')
 const http = require('http')
 const io = require('redux-io').default
@@ -235,13 +262,8 @@ const endpoints = routes({
   '/inception': compose(Async.of, IO.of)
 })
 
-const app = pipe(
-  parseJson,
-  pipeP(
-    endpoints,
-    json
-  )
-)
+const app =
+  composeP(json, endpoints, parseJson)
 
 const cry = require('paperplane-airbrake')(airbrake)
 
@@ -276,22 +298,25 @@ exports.handler = mount({ app, lambda: true })
 ### parseJson
 
 ```haskell
-parseJson :: Request -> Request
+parseJson :: Request -> Promise Request
 ```
 
-Parses the request body as `json` if available, and if the `content-type` is `application/json`.  Otherwise, passes the [`Request`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#request-object) through untouched.
+Parses the request body as `json` if available, and if the `content-type` is `application/json`.  Otherwise, resolves passing the [`Request`](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md#request-object) through untouched.
 
-See also [`cors`](#cors), [`serve`](#serve).
+Buffers the `req.body` stream for you, so you don't need a preceding [`bufferBody`](#bufferbody).
+
+See also [`bufferBody`](#bufferbody), [`cors`](#cors), [`serve`](#serve).
 
 ```js
-const { compose } = require('ramda')
+const { composeP } = require('ramda')
 const http = require('http')
 const { mount, parseJson, json } = require('paperplane')
 
 const echo = req =>
   Promise.resolve(req.body).then(json)
 
-const app = compose(echo, parseJson)
+const app =
+  composeP(echo, parseJson)
 
 http.createServer(mount({ app })).listen(3000)
 ```
@@ -311,7 +336,7 @@ See also [`html`](#html), [`json`](#json), [`send`](#send).
 ```js
 const { compose, composeP } = require('ramda')
 const http = require('http')
-const { html, methods, mount, parseJson, routes, send } = require('paperplane')
+const { html, methods, mount, routes, send } = require('paperplane')
 
 const login = require('./views/login')
 
