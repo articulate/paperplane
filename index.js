@@ -11,3 +11,4 @@ exports.routes     = require('./lib/routes').routes
 exports.send       = require('./lib/send').send
 exports.serve      = require('./lib/serve').serve
 exports.static     = require('./lib/static').static
+exports.use        = require('./lib/use').use

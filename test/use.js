@@ -1,16 +1,17 @@
+const { composeP }     = require('ramda')
 const { expect }      = require('chai')
 const http            = require('http')
 const request         = require('supertest')
 const spy             = require('@articulate/spy')
 
-const { mount } = require('..')
+const { mount, use } = require('..')
 
 describe('server middleware', () => {
 
   const cry    = spy()
   const logger = spy()
 
-  const app = () => Promise.resolve({ statusCode: 200 })
+  const myapp = () => Promise.resolve({ statusCode: 200 })
 
   afterEach(() => {
     cry.reset()
@@ -26,10 +27,10 @@ describe('server middleware', () => {
       next()
     }
 
-    const use = [ middle ]
+    const app = composeP(myapp, use(middle))
 
     const server =
-      http.createServer(mount({ app, cry, logger, use }))
+      http.createServer(mount({ app, cry, logger }))
 
     const agent  = request.agent(server)
 
@@ -69,10 +70,10 @@ describe('server middleware', () => {
       next()
     }
 
-    const use = [ middle1, middle2, middle3 ]
+    const app = composeP(myapp, use(middle3), use(middle2), use(middle1))
 
     const server =
-      http.createServer(mount({ app, cry, logger, use }))
+      http.createServer(mount({ app, cry, logger }))
 
     const agent  = request.agent(server)
 
@@ -99,10 +100,10 @@ describe('server middleware', () => {
       throw new Error('foobar')
     }
 
-    const use = [ middle ]
+    const app = composeP(myapp, use(middle))
 
     const server =
-      http.createServer(mount({ app, cry, logger, use }))
+      http.createServer(mount({ app, cry, logger }))
 
     const agent  = request.agent(server)
 
