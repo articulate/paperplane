@@ -130,6 +130,36 @@ describe('server middleware', () => {
     )
   })
 
+  context('with middleware that ends response', () => {
+    const middleSpy = spy()
+
+    const middle = (req, res, next) => {
+      middleSpy(req, res)
+      res.statusCode = 304
+      res.end()
+      next()
+    }
+
+    const app = composeP(myapp, use(middle))
+
+    const server =
+      http.createServer(mount({ app, cry, logger }))
+
+    const agent  = request.agent(server)
+
+    afterEach(() => {
+      middleSpy.reset()
+    })
+
+    it('calls middleware & responds', () =>
+      agent.get('/')
+        .expect(304)
+        .then(() => {
+          expect(middleSpy.calls).to.have.a.lengthOf(1)
+        })
+    )
+  })
+
   context('with erroring middleware', () => {
     const middleSpy = spy()
 
