@@ -4,14 +4,14 @@ const http            = require('http')
 const request         = require('supertest')
 const spy             = require('@articulate/spy')
 
-const { mount, use } = require('..')
+const { json, mount, use } = require('..')
 
 describe('server middleware', () => {
 
   const cry    = spy()
   const logger = spy()
 
-  const myapp = () => Promise.resolve({ statusCode: 200 })
+  const myapp = () => Promise.resolve(json({ mock: 'response' }))
 
   afterEach(() => {
     cry.reset()
@@ -88,6 +88,44 @@ describe('server middleware', () => {
         .expect('X-Foo', '105')
         .then(() => {
           expect(middleSpy.calls).to.have.a.lengthOf(3)
+        })
+    )
+  })
+
+  context('with middleware that alters response body', () => {
+    const middleSpy = spy()
+
+    const middle = (req, res, next) => {
+      middleSpy(req, res)
+
+      const _end = res.end
+
+      res.end = function (chunk, ...rest) {
+        const payload = JSON.parse(chunk)
+        payload.mock = 'foobar'
+        const transformed = JSON.stringify(payload)
+        return _end.call(this, transformed, ...rest)
+      }
+
+      next()
+    }
+
+    const app = composeP(myapp, use(middle))
+
+    const server =
+      http.createServer(mount({ app, cry, logger }))
+
+    const agent  = request.agent(server)
+
+    afterEach(() => {
+      middleSpy.reset()
+    })
+
+    it('calls middleware & responds', () =>
+      agent.get('/')
+        .expect(200, { mock: 'foobar' })
+        .then(() => {
+          expect(middleSpy.calls).to.have.a.lengthOf(1)
         })
     )
   })
