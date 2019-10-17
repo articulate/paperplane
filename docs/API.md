@@ -462,6 +462,8 @@ use :: Request -> Promise Request
 
 Applies connect middleware to a response. `use` functions will need to be invoked before all other functions. Multiple middleware functions can be applied.
 
+`use` cannot be applied in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment).
+
 ```js
 const compression = require('compression')
 const app = composeP(fetchPayload, use(compression()))
