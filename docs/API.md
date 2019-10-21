@@ -14,6 +14,7 @@
 | [`routes`](#routes) | maps express-style route patterns to handler functions |
 | [`send`](#send) | basic response helper |
 | [`serve`](#serve) | static file serving handler |
+| [`use`](#use) | use connect middleware |
 
 ### bufferBody
 
@@ -451,4 +452,19 @@ const app = routes({
 })
 
 http.createServer(mount({ app })).listen(3000)
+```
+
+### use
+
+```
+use :: Request -> Promise Request
+```
+
+Applies connect middleware to a response. `use` functions will need to be invoked before all other functions. Multiple middleware functions can be applied.
+
+`use` cannot be applied in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment).
+
+```js
+const compression = require('compression')
+const app = composeP(fetchPayload, use(compression()))
 ```
