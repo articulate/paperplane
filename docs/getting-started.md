@@ -120,7 +120,7 @@ The `Request` object is the sole input to your handler function, and has the fol
 | `protocol` | `String` | `https` if connection is encrypted, otherwise `http` |
 | `query` | `Object` | map of query string parameters |
 | `request` | [`IncomingMessage`](https://devdocs.io/node/http#http_class_http_incomingmessage) | reference to the original request object, not present in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment) |
-| `response` | [`ServerResponse`](https://devdocs.io/node/http#http_class_http_serverresponse) | refrence to the original response object,  not present in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment) |
+| `response` | [`ServerResponse`](https://devdocs.io/node/http#http_class_http_serverresponse) | reference to the original response object, not present in [serverless mode](https://github.com/articulate/paperplane/blob/master/docs/API.md#serverless-deployment) |
 | `route` | `String` | matched route pattern, only present if [`routes`](https://github.com/articulate/paperplane/blob/master/docs/API.md#routes) function used |
 | `url` | `String` | the full [request url](http://devdocs.io/node/http#http_message_url) |
 
