@@ -1,10 +1,11 @@
 language: node_js
 node_js:
+  - '12'
   - '10'
   - '8'
   - '6'
 before_install:
-  - npm install -g yarn@1.10.1
+  - npm install -g yarn@1.21.1
 install:
   - yarn install --pure-lockfile
 script:
