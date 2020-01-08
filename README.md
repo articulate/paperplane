@@ -51,3 +51,15 @@ http.createServer(mount({ app })).listen(3000, logger)
 ```
 
 So simple and functional, with an easily readable routing table and pure functions for the route handler.  If that sounds like fun to you, then read the [Getting started guide](https://github.com/articulate/paperplane/blob/master/docs/getting-started.md) or the [API docs](https://github.com/articulate/paperplane/blob/master/docs/API.md) to learn more.
+
+## Example application
+
+To help you learn the concepts used in paperplane, check out the [demo application](https://github.com/articulate/paperplane/blob/master/demo).
+
+If you have docker installed, you can run the demo locally:
+
+1. Clone this repo
+1. If you're using Docker Desktop for Windows:
+    - `cp docker-compose.override.windows.yml docker-compose.override.yml`
+1. `docker-compose up`
+1. http://localhost:3000

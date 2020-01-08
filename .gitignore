@@ -3,3 +3,4 @@
 .nyc_output
 .yarn*
 node_modules
+/docker-compose.override.yml

@@ -1,0 +1,4 @@
+version: '2'
+services:
+  app:
+    command: yarn start:windows # use nodemon's legacy watch mode to detect file changes on Windows
