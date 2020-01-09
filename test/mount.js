@@ -184,6 +184,17 @@ describe('mount', () => {
           .expect('www-authenticate', /Basic/)
           .expect('www-authenticate', /realm="protected area"/)
           .expect('www-authenticate', /error="error message"/)
+          .then(res => {
+            expect(res.body).to.eql({
+              statusCode: 401,
+              error: 'Unauthorized',
+              message: 'error message',
+              attributes: {
+                realm: 'protected area',
+                error: 'error message'
+              }
+            })
+          })
       )
 
       it('catches and formats http-errors', () =>

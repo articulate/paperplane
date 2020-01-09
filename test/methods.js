@@ -1,3 +1,4 @@
+const { expect } = require('chai')
 const { always: K } = require('ramda')
 const http    = require('http')
 const request = require('supertest')
@@ -23,6 +24,14 @@ describe('methods', function() {
   )
 
   it('404 Not Founds when no matching method is found', () =>
-    agent.post('/').send({}).expect(404)
+    agent.post('/').send({})
+      .expect(404)
+      .then(res => {
+        expect(res.body).to.eql({
+          error: 'Not Found',
+          message: 'Not Found',
+          statusCode: 404
+        })
+      })
   )
 })
