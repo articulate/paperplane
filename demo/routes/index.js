@@ -1,12 +1,12 @@
+const { validate } = require('@articulate/funky')
+const Boom = require('@hapi/boom')
+const { NotAcceptable } = require('http-errors')
+const Joi = require('joi')
 const { always, compose, prop } = require('ramda')
 const { json, methods, routes, send, serve } = require('../..')
 
 const pages = require('./pages')
 const users = require('./users')
-
-const error = () => {
-  throw new Error('this code is broken')
-}
 
 module.exports = routes({
   '/api/old-users': methods({
@@ -26,7 +26,13 @@ module.exports = routes({
 
   '/cookies': compose(json, prop('cookies')),
 
-  '/error': error,
+  '/errors/basic': () => { throw new Error('this code is broken') },
+
+  '/errors/boom': () => { throw Boom.conflict() },
+
+  '/errors/http': () => { throw new NotAcceptable() },
+
+  '/errors/joi': () => validate(Joi.string(), 123),
 
   '/health': always(send()),
 
