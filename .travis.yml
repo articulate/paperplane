@@ -5,7 +5,7 @@ node_js:
   - '8'
   - '6'
 before_install:
-  - npm install -g yarn@1.21.1
+  - npm install -g yarn@1.10.1 # nyc does not run properly with newer yarn for some reason
 install:
   - yarn install --pure-lockfile
 script:
