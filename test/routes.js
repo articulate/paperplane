@@ -1,3 +1,4 @@
+const { expect } = require('chai')
 const { always: K, compose, pick } = require('ramda')
 const http    = require('http')
 const request = require('supertest')
@@ -28,6 +29,14 @@ describe('routes', () => {
   )
 
   it('404 Not Founds for unmatched routes', () =>
-    agent.get('/not-found').expect(404)
+    agent.get('/not-found')
+      .expect(404)
+      .then(res => {
+        expect(res.body).to.eql({
+          error: 'Not Found',
+          message: 'Not Found',
+          statusCode: 404
+        })
+      })
   )
 })

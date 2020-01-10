@@ -1,0 +1,10 @@
+version: '2'
+services:
+  app:
+    build: .
+    image: paperplane-demo
+    ports:
+      - 3000:3000
+    volumes:
+      - '.:/usr/src/app'
+      - '/usr/src/app/node_modules'

@@ -175,7 +175,14 @@ describe('mount', () => {
 
     describe('errors', () => {
       it('defaults statusCode to 500', () =>
-        agent.get('/error').expect(500)
+        agent.get('/error')
+          .expect(500)
+          .then(res => {
+            expect(res.body).to.eql({
+              name: 'Error',
+              message: 'error'
+            })
+          })
       )
 
       it('catches and formats boom errors', () =>
@@ -184,14 +191,48 @@ describe('mount', () => {
           .expect('www-authenticate', /Basic/)
           .expect('www-authenticate', /realm="protected area"/)
           .expect('www-authenticate', /error="error message"/)
+          .then(res => {
+            expect(res.body).to.eql({
+              statusCode: 401,
+              error: 'Unauthorized',
+              message: 'error message',
+              attributes: {
+                realm: 'protected area',
+                error: 'error message'
+              }
+            })
+          })
       )
 
       it('catches and formats http-errors', () =>
-        agent.get('/http').expect(404)
+        agent.get('/http')
+          .expect(404)
+          .then(res => {
+            expect(res.body).to.eql({
+              name: 'NotFoundError',
+              message: 'Not Found'
+            })
+          })
       )
 
       it('catches and formats joi errors', () =>
-        agent.get('/joi').expect(400)
+        agent.get('/joi')
+          .expect(400)
+          .then(res => {
+            expect(res.body).to.eql({
+              details: [{
+                message: '"value" must be a string',
+                path: [],
+                type: 'string.base',
+                context: {
+                  value: 123,
+                  label: 'value'
+                }
+              }],
+              message: '"value" must be a string',
+              name: 'ValidationError'
+            })
+          })
       )
     })
 

@@ -20,6 +20,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
     "start": "nodemon -w demo -w lib demo/index.js",
+    "start:windows": "yarn start -L",
     "test": "mocha --reporter dot",
     "test:ci": "yarn run lint && yarn run test:coverage && yarn run coverage",
     "test:coverage": "nyc yarn run test"
